@@ -12,6 +12,7 @@
     "socket.io": "0.9.x",
     "express": "3.4.x",
     "jasmine-node": "~1.14.3",
-    "es6-promise": "*"
+    "es6-promise": "*",
+    "coveralls": "^2.10.0"
   }
 }
