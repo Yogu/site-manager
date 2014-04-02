@@ -1,7 +1,7 @@
 var Promise = require('es6-promise').Promise;
 var EventEmitter = require('events').EventEmitter;
 
-function Task() {
+function Task(name, perform) {
 	// capture the callbacks to defer the actual task performance until start() is called
 	Promise.call(this, function(resolve, reject) {
 		this._resolve = function() {
@@ -18,7 +18,12 @@ function Task() {
 	this.status = 'ready';
 	this._events = new EventEmitter();
 	this.id = Task._nextTaskID++;
-	this.name = 'Task #' + this.id;
+	if (name)
+		this.name = name;
+	else
+		this.name = 'Task #' + this.id;
+	if (perform)
+		this.perform = perform;
 };
 
 Task._nextTaskID = 1;
