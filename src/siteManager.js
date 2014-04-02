@@ -9,8 +9,6 @@ function SiteManager(path) {
 	TaskContext.call(this);
 	this.path = path;
 	this.sites = [];
-	
-	this.schedule(this.loadTask());
 }
 
 SiteManager.prototype = Object.create(TaskContext.prototype);
@@ -22,7 +20,7 @@ SiteManager.prototype.loadTask = function() {
 		fs.readFile(self.path + '/config.yaml', 'utf8', function(err, data) {
 			try {
 				if (err)
-					return reject();
+					return reject(err);
 				var config = yaml.safeLoad(data);
 				
 				if (config.siteRoot)
