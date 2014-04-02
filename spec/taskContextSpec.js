@@ -1,4 +1,4 @@
-var TaskContext = require('../src/task-context.js');
+var TaskContext = require('../src/taskContext.js');
 var Task = require('../src/task.js');
 
 describe("TaskContext", function() {
