@@ -26,3 +26,9 @@ node_modules
 
 # Eclipse
 .settings/
+
+# Backup files
+*~
+
+# Application
+config.yaml
