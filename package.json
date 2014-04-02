@@ -10,8 +10,8 @@
   "license": "GPLv2",
   "dependencies": {
     "socket.io": "0.9.x",
-    "express": "3.4.x",
-    "jasmine-node": "~1.14.3",
+    "express": "3.5.x",
+    "jasmine-node": "1.14.x",
     "es6-promise": "*",
     "js-yaml": "3.0.x"
   },
