@@ -117,4 +117,49 @@ describe("Task", function(done) {
 			done();
 		});
 	});
+	
+	it("can run nested tasks", function(done) {
+		var parent = new Task();
+		parent.name = 'parent';
+		var goodChild = new Task();
+		goodChild.name = 'good-child';
+		var badChild = new Task();
+		badChild.name = 'bad-child';
+		parent.perform = function(resolve) {
+			this.log('before');
+			this.runNested(goodChild).then(function() {
+				this.log('between');
+				return this.runNested(badChild);
+			}.bind(this)).catch(function() {
+				this.log('after');
+				resolve();
+			}.bind(this));
+		};
+		goodChild.perform = function(resolve) {
+			this.log('good child');
+			resolve();
+		};
+		badChild.perform = function(resolve, reject) {
+			this.log('bad child');
+			reject();
+		};
+		var log = [];
+		parent.on('log', function(message) {
+			log.push(message);
+		});
+		
+		parent.start();
+		parent.then(function() {
+			expect(log).toEqual(['before',
+			                    'Starting nested task good-child',
+			                    '  good child',
+			                    'Nested task good-child succeeded',
+			                    'between',
+			                    'Starting nested task bad-child',
+			                    '  bad child',
+			                    'Nested task bad-child failed',
+			                    'after']);
+			done();
+		});
+	});
 });

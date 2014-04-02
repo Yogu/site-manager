@@ -56,4 +56,18 @@ Task.prototype.log = function(message) {
 	this._events.emit('log', message);
 };
 
+Task.prototype.runNested = function(task) {
+	task.on('log', function(message) {
+		this.log('  ' + message);
+	}.bind(this));
+	this.log('Starting nested task ' + task.name);
+	task.start();
+	return task.then(function() {
+		this.log('Nested task ' + task.name + ' succeeded');
+	}.bind(this), function(e) {
+		this.log('Nested task ' + task.name + ' failed');
+		throw e;
+	}.bind(this));
+};
+
 module.exports = Task;
