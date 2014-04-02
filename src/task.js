@@ -1,4 +1,5 @@
 var Promise = require('es6-promise').Promise;
+var EventEmitter = require('events').EventEmitter;
 
 function Task() {
 	// capture the callbacks to defer the actual task performance until start() is called
@@ -15,6 +16,7 @@ function Task() {
 	}.bind(this));
 	
 	this.status = 'ready';
+	this._events = new EventEmitter();
 	this.id = Task._nextTaskID++;
 	this.name = 'Task #' + this.id;
 };
@@ -40,6 +42,18 @@ Task.prototype.start = function() {
 
 Task.prototype.perform = function(resolve, reject) {
 	reject("perform() method must be overridden");
+};
+
+Task.prototype.on = function() {
+	this._events.on.apply(this._events, arguments);
+};
+
+Task.prototype.once = function() {
+	this._events.once.apply(this._events, arguments);
+};
+
+Task.prototype.log = function(message) {
+	this._events.emit('log', message);
 };
 
 module.exports = Task;

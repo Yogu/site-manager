@@ -101,4 +101,20 @@ describe("Task", function(done) {
 			done();
 		});
 	});
+	
+	it("should emit event when log() is called", function(done) {
+		var task = new Task();
+		task.perform = function(resolve, reject) { this.log("The message"); resolve(); };
+		var messageReceived = false;
+		task.on("log", function(message) {
+			expect(messageReceived).toBe(false);
+			expect(message).toBe("The message");
+			messageReceived = true;
+		});
+		task.start();
+		task.then(function() {
+			expect(messageReceived).toBe(true);
+			done();
+		});
+	});
 });
