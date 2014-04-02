@@ -1,0 +1,7 @@
+---
+siteRoot: sites
+sites:
+  test:
+  dev:
+    root: ../dev-site
+

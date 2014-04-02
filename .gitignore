@@ -31,4 +31,4 @@ node_modules
 *~
 
 # Application
-config.yaml
+/config.yaml
