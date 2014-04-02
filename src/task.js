@@ -15,7 +15,11 @@ function Task() {
 	}.bind(this));
 	
 	this.status = 'ready';
+	this.id = Task._nextTaskID++;
+	this.name = 'Task #' + this.id;
 };
+
+Task._nextTaskID = 1;
 
 Task.prototype = Object.create(Promise.prototype);
 

@@ -1,6 +1,18 @@
 var Task = require('../src/task.js');
 
 describe("Task", function(done) {
+	it("has unique id", function() {
+		var task1 = new Task();
+		var task2 = new Task();
+		expect(task1.id).not.toEqual(task2.id);
+	});
+	
+	it("has unique name by default", function() {
+		var task1 = new Task();
+		var task2 = new Task();
+		expect(task1.name).not.toEqual(task2.name);
+	});
+	
 	it("should be ready after creation", function() {
 		var task = new Task();
 		expect(task.status).toEqual("ready");
