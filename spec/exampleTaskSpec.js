@@ -1,7 +1,7 @@
 var ExampleTask = require('../src/tasks/example.js');
 
 describe("ExampleTask", function() {
-	it("should add numbers", function(done) {
+	it("adds numbers", function(done) {
 		var task = new ExampleTask([1,2,3]);
 		task.then(function(sum) {
 			expect(sum).toEqual(6);
@@ -10,7 +10,7 @@ describe("ExampleTask", function() {
 		task.start();
 	});
 
-	it("should fail if sum is zero", function(done) {
+	it("fails if sum is zero", function(done) {
 		var task = new ExampleTask([1, 2, -3]);
 		task.catch(function() {
 			done();

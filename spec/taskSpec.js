@@ -13,12 +13,12 @@ describe("Task", function(done) {
 		expect(task1.name).not.toEqual(task2.name);
 	});
 	
-	it("should be ready after creation", function() {
+	it("is ready after creation", function() {
 		var task = new Task();
 		expect(task.status).toEqual("ready");
 	});
 	
-	it("should fail without setting perform()", function(done) {
+	it("fails without setting perform()", function(done) {
 		var task = new Task();
 		task.start();
 		task.catch(function() {
@@ -27,7 +27,7 @@ describe("Task", function(done) {
 		});
 	});
 	
-	it("should be running after calling start()", function() {
+	it("is running after calling start()", function() {
 		var task = new Task();
 		task.perform = function(res) { };
 		
@@ -36,7 +36,7 @@ describe("Task", function(done) {
 		expect(task.status).toEqual("running");
 	});
 	
-	it("should not run before start() is called", function() {
+	it("does not run before start() is called", function() {
 		var task = new Task();
 		var performed = false;
 		task.perform = function() { performed = true; };
@@ -44,7 +44,7 @@ describe("Task", function(done) {
 		expect(performed).toEqual(false);
 	});
 	
-	it("should not allow to call start() twice", function() {
+	it("does not allow to call start() twice", function() {
 		var task = new Task();
 		task.perform = function(res) { };		
 		task.start();
@@ -56,7 +56,7 @@ describe("Task", function(done) {
 		expect(task.status).toEqual("running");
 	});
 	
-	it("should be done when perform calls resolve()", function(done) {
+	it("is done when perform calls resolve()", function(done) {
 		var task = new Task();
 		task.perform = function(res) { res(); };
 		task.start();
@@ -67,7 +67,7 @@ describe("Task", function(done) {
 		});
 	});
 	
-	it("should call perform() when start() is called", function(done) {
+	it("calls perform() when start() is called", function(done) {
 		var task = new Task();
 		var performed = false;
 		task.perform = function(res) { performed = true; res(); };
@@ -79,7 +79,7 @@ describe("Task", function(done) {
 		});
 	});
 	
-	it("should be failed when perform calls reject()", function(done) {
+	it("is failed when perform calls reject()", function(done) {
 		var task = new Task();
 		task.perform = function(resolve, reject) { reject("reason"); };
 		task.start();
@@ -91,7 +91,7 @@ describe("Task", function(done) {
 		});
 	});
 	
-	it("should fail if error is throwin in perform()", function(done) {
+	it("fails if error is throwin in perform()", function(done) {
 		var task = new Task();
 		task.perform = function(resolve, reject) { throw "the error"; };
 		task.start();
@@ -102,7 +102,7 @@ describe("Task", function(done) {
 		});
 	});
 	
-	it("should emit event when log() is called", function(done) {
+	it("emits event when log() is called", function(done) {
 		var task = new Task();
 		task.perform = function(resolve, reject) { this.log("The message"); resolve(); };
 		var messageReceived = false;

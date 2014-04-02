@@ -2,12 +2,12 @@ var TaskContext = require('../src/task-context.js');
 var Task = require('../src/task.js');
 
 describe("TaskContext", function() {
-	it("should be idle after creation", function() {
+	it("is idle after creation", function() {
 		var context = new TaskContext();
 		expect(context.isBusy).toBe(false);
 	});
 	
-	it("should run task directly if not busy", function(done) {
+	it("runs task directly if not busy", function(done) {
 		var context = new TaskContext();
 		var task = new Task();
 		var isPerformed = false;
@@ -25,7 +25,7 @@ describe("TaskContext", function() {
 		context.schedule(task);
 	});
 	
-	it("should run second task when first task is done", function(done) {
+	it("runs second task when first task is done", function(done) {
 		var context = new TaskContext();
 		var task1 = new Task();
 		var task2 = new Task();
@@ -55,7 +55,7 @@ describe("TaskContext", function() {
 		});
 	});
 	
-	it("should emit the status event", function(done) {
+	it("emits the status event", function(done) {
 		var context = new TaskContext();
 		var task = new Task();
 		task.perform = function(resolve) { resolve(); };
