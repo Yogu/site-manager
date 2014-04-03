@@ -8,6 +8,7 @@ describe("Site", function() {
 	it("can load", function(done) {
 		resources.use(function(resourcesPath) {
 			var site = new Site("test", path.resolve(resourcesPath, 'site-collection/sites/test'));
+			site.on('fail', function(task, error) { this.fail(error); done(); }.bind(this));
 			var task = site.loadTask();
 			// task.on('log', console.log.bind(console)); // for debugging
 			site.schedule(task);

@@ -7,7 +7,7 @@ var resourcesPath = path.resolve(__dirname, 'resources');
 describe("SiteManager", function() {
 	it("loads config properly", function(done) {
 		var manager = new SiteManager(path.resolve(resourcesPath, 'site-collection'));
-		manager.on('fail', function(task, error) { this.fail(error); done(); }.bind(this))
+		manager.on('fail', function(task, error) { this.fail(error); done(); }.bind(this));
 		
 		manager.schedule(manager.loadTask());
 		manager.on('load', function() {
