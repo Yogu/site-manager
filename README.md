@@ -7,6 +7,8 @@ You want to develop, test and deploy a website reliably, automating as much as p
 
 #### Features
 
+**Important notice: These are the planned feature, the application is in a very early development state.**
+
 **site-manager**
 
 * manages multiple instances of your website, e.g. **dev, alpha, beta, staging** and **production**
