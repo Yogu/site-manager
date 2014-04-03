@@ -38,4 +38,13 @@ describe("ShellTask", function() {
 			done();
 		});
 	});
+	
+	it("respects cwd parameter", function(done) {
+		var task = new ShellTask('pwd', '/usr/bin');
+		task.start();
+		task.then(function(stdout) {
+			expect(stdout.trim()).toEqual("/usr/bin");
+			done();
+		});
+	});
 });
