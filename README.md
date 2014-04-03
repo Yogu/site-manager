@@ -1,7 +1,7 @@
 site-manager
 ============
 
-[![Build Status](https://travis-ci.org/Yogu/site-manager.svg?branch=master)](https://travis-ci.org/Yogu/site-manager) [![Coverage Status](https://coveralls.io/repos/Yogu/site-manager/badge.png?branch=master)](https://coveralls.io/r/Yogu/site-manager?branch=master) [![Dependency Status](https://gemnasium.com/Yogu/site-manager.svg)](https://gemnasium.com/Yogu/site-manager)
+[![Build Status](https://travis-ci.org/Yogu/site-manager.svg?branch=master)](https://travis-ci.org/Yogu/site-manager) [![Coverage Status](https://coveralls.io/repos/Yogu/site-manager/badge.png?branch=master)](https://coveralls.io/r/Yogu/site-manager?branch=master) [![Dependency Status](https://gemnasium.com/Yogu/site-manager.svg)](https://gemnasium.com/Yogu/site-manager) [![Code Climate](https://codeclimate.com/github/Yogu/site-manager.png)](https://codeclimate.com/github/Yogu/site-manager)
 
 You want to develop, test and deploy a website reliably, automating as much as possible and monitor all these tasks?
 
