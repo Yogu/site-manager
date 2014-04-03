@@ -127,21 +127,23 @@ describe("Task", function(done) {
 		badChild.name = 'bad-child';
 		parent.perform = function(resolve) {
 			this.log('before');
-			this.runNested(goodChild).then(function() {
+			this.runNested(goodChild).then(function(argument) {
+				expect(argument).toBe('good');
 				this.log('between');
 				return this.runNested(badChild);
-			}.bind(this)).catch(function() {
+			}.bind(this)).catch(function(argument) {
+				expect(argument).toBe('bad');
 				this.log('after');
 				resolve();
 			}.bind(this));
 		};
 		goodChild.perform = function(resolve) {
 			this.log('good child');
-			resolve();
+			resolve('good');
 		};
 		badChild.perform = function(resolve, reject) {
 			this.log('bad child');
-			reject();
+			reject('bad');
 		};
 		var log = [];
 		parent.on('log', function(message) {
@@ -157,7 +159,7 @@ describe("Task", function(done) {
 			                    'between',
 			                    'Starting nested task bad-child',
 			                    '  bad child',
-			                    'Nested task bad-child failed',
+			                    'Nested task bad-child failed: bad',
 			                    'after']);
 			done();
 		});

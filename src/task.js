@@ -67,8 +67,9 @@ Task.prototype.runNested = function(task) {
 	}.bind(this));
 	this.log('Starting nested task ' + task.name);
 	task.start();
-	return task.then(function() {
+	return task.then(function(result) {
 		this.log('Nested task ' + task.name + ' succeeded');
+		return result;
 	}.bind(this), function(e) {
 		this.log('Nested task ' + task.name + ' failed' + (e ? ': ' + e : ''));
 		throw e;
