@@ -76,4 +76,14 @@ Task.prototype.runNested = function(task) {
 	}.bind(this));
 };
 
+Task.prototype.cd = function(path) {
+	this.cwd = path;
+};
+
+Task.prototype.exec = function(shellCommand, cwd) {
+	var ShellTask = require('./tasks/shell.js');
+	var task = new ShellTask(shellCommand, cwd || this.cwd);
+	return this.runNested(task);
+};
+
 module.exports = Task;

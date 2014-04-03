@@ -164,4 +164,17 @@ describe("Task", function(done) {
 			done();
 		});
 	});
+	
+	it("provides shorthand to execute shell scripts", function(done) {
+		var task = new Task();
+		task.perform = function(resolve, reject) {
+			this.cd('/usr/bin');
+			this.exec('pwd').then(function(result) {
+				expect(result.trim()).toBe('/usr/bin');
+				resolve();
+			});
+		};
+		task.start();
+		task.then(done);
+	});
 });
