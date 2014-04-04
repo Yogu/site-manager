@@ -4,7 +4,8 @@
   "description": "Upgrade, backup and manage multiple instances of the same website",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine-node spec/"
+    "test": "jasmine-node spec/ --captureExceptions",
+    "postinstall": "bower install"
   },
   "author": "Jan Melcher <info@yogularm.de>",
   "license": "GPLv2",

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+	<head>
+		<meta charset="utf-8">
+		<title>site-manager</title>
+		
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+		
+		<script async defer src="bower_components/requirejs/require.js" data-main="js/main"></script>
+	</head>
+			
+	<body>
+		<div class="navbar navbar-inverse" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">site-manager</a>
+				</div>
+			</div>
+		</div>
+		
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3" ng-controller="SiteNavCtrl">
+				<h3>Navigation</h3>
+				<ul>
+					<li ng-repeat="site in sites" class="site {{$isBusy ? busy : ''}}" 
+						ng-title="$isBusy ? 'busy' : 'idle'">
+						<a href="#/sites/{{site.name}}">{{site.name}}</a>
+					</li>
+				</ul>
+			</div>
+			
+			<div class="col-md-9" ng-view class="view-frame">
+				
+			</div>
+		</div>
+	</div>
+</html>

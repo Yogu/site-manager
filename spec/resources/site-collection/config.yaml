@@ -1,5 +1,6 @@
 ---
 siteRoot: sites
+repo: repo.git
 sites:
   test:
   dev:
