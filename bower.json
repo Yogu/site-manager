@@ -1,0 +1,14 @@
+{
+  "name": "site-manager",
+  "version": "0.0.1",
+  "homepage": "https://github.com/Yogu/site-manager",
+  "authors": [
+    "Jan Melcher <info@yogularm.de>"
+  ],
+  "description": "Upgrade, backup and manage multiple instances of the same website",
+  "license": "GPLv2",
+  "private": true,
+  "dependencies": {
+    "angular": "1.2.x"
+  }
+}
