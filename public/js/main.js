@@ -2,6 +2,7 @@ requirejs.config({
 	paths: {
 		angular: '../bower_components/angular/angular',
 		angularRoute: '../bower_components/angular-route/angular-route',
+		angularMocks: '../bower_components/angular-mocks/angular-mocks',
 		jquery: '../bower_components/jquery/dist/jquery',
 		bootstrap: '../bower_components/bootstrap/dist/js/bootstrap',
 		es6promise: '../bower_components/es6-promise/promise'
@@ -32,6 +33,7 @@ require( [
 		var $html = angular.element(document.getElementsByTagName('html')[0]);
 		
 		angular.element().ready(function() {
-		angular.resumeBootstrap([app['name']]);
+		if (angular.resumeBootsrap)
+			angular.resumeBootstrap([app['name']]);
 	});
 });

@@ -1,4 +1,4 @@
-var Site = require('../src/site.js');
+var Site = require('../../src/site.js');
 var path = require('path');
 var resources = require('./utils/resources.js');
 

@@ -11,6 +11,7 @@
 	"dependencies": {
 		"angular": "1.2.x",
 		"angular-route": "1.2.x",
+		"angular-mocks": "~1.2.15",
 		"bootstrap": "3.1.x",
 		"requirejs": "2.1.x",
 		"es6-promise": "0.1.x"

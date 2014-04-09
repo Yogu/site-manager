@@ -1,4 +1,4 @@
-var server = require('../src/server.js');
+var server = require('../../src/server.js');
 
 describe("server", function() {
 	it("boots without errors", function() {

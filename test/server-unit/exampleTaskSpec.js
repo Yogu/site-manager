@@ -1,4 +1,4 @@
-var ExampleTask = require('../src/tasks/example.js');
+var ExampleTask = require('../../src/tasks/example.js');
 
 describe("ExampleTask", function() {
 	it("adds numbers", function(done) {

@@ -1,5 +1,5 @@
-var TaskContext = require('../src/taskContext.js');
-var Task = require('../src/task.js');
+var TaskContext = require('../../src/taskContext.js');
+var Task = require('../../src/task.js');
 
 describe("TaskContext", function() {
 	it("is idle after creation", function() {

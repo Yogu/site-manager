@@ -1,4 +1,4 @@
-var extract = require('../src/objects.js').extract;
+var extract = require('../../src/objects.js').extract;
 var Promise = require('es6-promise').Promise;
 
 describe('objects.extract()', function() {

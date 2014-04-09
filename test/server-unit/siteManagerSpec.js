@@ -1,5 +1,5 @@
-var SiteManager = require('../src/siteManager.js');
-var Site = require('../src/site.js');
+var SiteManager = require('../../src/siteManager.js');
+var Site = require('../../src/site.js');
 var path = require('path');
 
 var resourcesPath = path.resolve(__dirname, 'resources');

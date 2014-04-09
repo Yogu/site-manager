@@ -1,4 +1,4 @@
-var ShellTask = require('../src/tasks/shell.js');
+var ShellTask = require('../../src/tasks/shell.js');
 
 describe("ShellTask", function() {
 	it("returns the stdout", function(done) {

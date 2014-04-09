@@ -1,4 +1,4 @@
-var Task = require('../src/task.js');
+var Task = require('../../src/task.js');
 
 describe("Task", function(done) {
 	it("has unique id", function() {
