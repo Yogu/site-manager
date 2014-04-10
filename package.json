@@ -14,22 +14,24 @@
 		"express-promise": "0.1.x"
 	},
 	"devDependencies": {
-		"coveralls": "^2.10.0",
+		"coveralls": "2.10.x",
 		"jasmine-node": "1.14.x",
 		"rimraf": "2.2.x",
 		"ncp": "0.5.x",
 		"walk": "2.2.x",
 		"karma": "~0.10",
-		"protractor": "~0.20.1",
-		"phantomjs": "1.9.x"
+		"protractor": "0.20.x",
+		"phantomjs": "1.9.x",
+		"istanbul": "0.2.x"
 	},
 	
 	"scripts": {
 		"postinstall": "bower install",
 		
-		"test": "npm run server-unit-test && npm run client-unit-test && npm run end-to-end-test",
-		"server-unit-test": "jasmine-node --captureExceptions test/server-unit",
+		"server-unit-test": "istanbul cover -x 'test/**' jasmine-node --captureExceptions test/server-unit",
 		"client-unit-test": "karma start test/karma-conf.js",
-		"end-to-end-test": "webdriver-manager update && protractor test/protractor-conf.js"
+		"end-to-end-test": "webdriver-manager update && protractor test/protractor-conf.js",
+		"test": "npm run server-unit-test && npm run client-unit-test && npm run end-to-end-test",
+		"coveralls": "cat ./coverage/lcov.info | coveralls"
 	}
 }
