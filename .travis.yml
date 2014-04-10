@@ -1,7 +1,8 @@
 language: node_js
 node_js: 0.11
-env: BROWSERS=firefox E2E_BROWSERS=Firefox
 
 before_script: export DISPLAY=:99.0 && sh -e /etc/init.d/xvfb start
-script: npm test
+script:
+ - npm run server-unit-test
+ - npm run client-unit-test
 after_success: npm run coveralls
