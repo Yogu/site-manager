@@ -3,6 +3,34 @@ var walk = require('walk');
 var Path = require('path');
 var rmRecursively = require('rimraf');
 var ncp = require('ncp');
+var Promise = require('es6-promise').Promise;
+
+var resourceSourcePath = Path.resolve(__dirname, '../resources');
+var workdirPath = Path.resolve(__dirname, '../workdir');
+
+// clear workdir at the beginning of the tests, so that all files created
+// during the tests are accessible after it
+var workdirCleared = new Promise(function(resolve) {
+	fs.exists(workdirPath, function(exists) {
+		if (!exists)
+			return resolve();
+		rmRecursively(workdirPath, function(error) {
+			if(error)
+				return console.error(error.stack);
+			resolve();
+		});
+	});
+}).then(function() {
+	return new Promise(function(resolve) {
+		fs.mkdir(workdirPath, function(err) { if (err) throw err; resolve(); });
+	});
+});
+
+var workdirIndex = 1;
+
+function getNewWorkdirPath() {
+	return workdirPath + '/' + workdirIndex++;
+}
 
 function renameDotGit(path, callback) {
 	var walker = walk.walk(path, { followLinks: false });
@@ -20,20 +48,17 @@ function renameDotGit(path, callback) {
 }
 
 exports.use = function(callback) {
-	var resourceSourcePath = Path.resolve(__dirname, '../resources');
-	var resourceDestPath = Path.resolve(__dirname, '../workdir');
-	rmRecursively(resourceDestPath, function(error) {
-		if (error)
-			throw error;
-		ncp(resourceSourcePath, resourceDestPath, function(error) {
+	workdirCleared.then(function() {
+		var path = getNewWorkdirPath();
+		ncp(resourceSourcePath, path, function(error) {
 			if (error)
 				throw error;
 			
-			renameDotGit(resourceDestPath, function(error) {
+			renameDotGit(path, function(error) {
 				if (error)
 					throw error;
 				
-				callback(resourceDestPath);
+				callback(path);
 			});
 		}.bind(this));
 	}.bind(this));
