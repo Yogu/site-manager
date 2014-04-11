@@ -11,7 +11,8 @@
 		"es6-promise": "*",
 		"js-yaml": "3.0.x",
 		"bower": "1.3.x",
-		"express-promise": "0.1.x"
+		"express-promise": "0.1.x",
+		"mkdirp": "0.3.x"
 	},
 	"devDependencies": {
 		"coveralls": "2.10.x",
@@ -28,10 +29,11 @@
 	"scripts": {
 		"postinstall": "bower install",
 		
-		"server-unit-test": "istanbul cover -x 'test/**' jasmine-node -- --captureExceptions test/server-unit",
+		"server-unit-test-with-coverage": "istanbul cover -x 'test/**' jasmine-node -- --captureExceptions test/server-unit",
+		"server-unit-test": "jasmine-node --captureExceptions test/server-unit",
 		"client-unit-test": "karma start test/karma-conf.js",
 		"end-to-end-test": "webdriver-manager update && protractor test/protractor-conf.js --browser=${BROWSER-chrome}",
-		"test": "npm run server-unit-test && npm run client-unit-test && npm run end-to-end-test",
+		"test": "npm run server-unit-test-with-coverage && npm run client-unit-test && npm run end-to-end-test",
 		"coveralls": "cat ./coverage/lcov.info | coveralls"
 	}
 }

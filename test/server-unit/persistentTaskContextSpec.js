@@ -25,7 +25,7 @@ describe('PersistentTaskContext', function() {
 					// now give it the path
 					context.setTaskArchivePath(path);
 					// give it time to save
-					return new Promise(function(resolve) { setTimeout(resolve, 200); });
+					return new Promise(function(resolve) { setTimeout(resolve, 100); });
 				})
 				.then(function() {
 					var context = new PersistentTaskContext(path);
@@ -36,6 +36,27 @@ describe('PersistentTaskContext', function() {
 				})
 				.catch(function(err) { this.fail(err); }.bind(this))
 				.then(done);
+		}.bind(this));
+	});
+	
+	it("creates log path if not existing", function(done) {
+		resources.withEmptyDir(function(path) {
+			var context = new PersistentTaskContext(path + '/deeply/nested');
+			var task1 = new Task(function(resolve) { resolve(); });
+			context.schedule(task1);
+			
+			task1
+			.then(function() {
+				return new Promise(function(resolve) { setTimeout(resolve, 100); }) // time to save
+			})
+			.then(function() {
+				return context.count()
+			})
+			.then(function(count) {
+				expect(count).toBe(1);
+			})
+			.catch(function(err) { this.fail(err); }.bind(this))
+			.then(done);
 		}.bind(this));
 	});
 

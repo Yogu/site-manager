@@ -3,6 +3,7 @@ var yaml = require('js-yaml');
 var objects = require('./objects.js');
 var fs = require('fs');
 var Promise = require('es6-promise').Promise;
+var mkdirp = require('mkdirp');
 
 /**
  * A task context that archives logs of succeeded and failed tasks
@@ -10,13 +11,11 @@ var Promise = require('es6-promise').Promise;
  */
 function PersistentTaskContext(path) {
 	TaskContext.call(this);
-	this._taskArchivePath = path;
 	this._taskArchivePathSet = new Promise(function(resolve) { 
-		if (path)
-			resolve();
-		else
-			this._resolveTaskArchivePathSet = resolve;
+		this._resolveTaskArchivePathSet = resolve;
 	}.bind(this));
+	if (path)
+		this.setTaskArchivePath(path);
 	this._tasksInMemory = [];
 	
 	this.on('schedule', function(task) {
@@ -30,9 +29,15 @@ function PersistentTaskContext(path) {
 PersistentTaskContext.prototype = Object.create(TaskContext.prototype);
 
 PersistentTaskContext.prototype.setTaskArchivePath = function(path) {
-	this._taskArchivePath = path;
-	if (this._resolveTaskArchivePathSet)
-		this._resolveTaskArchivePathSet();
+	this._taskArchivePathInitialized = new Promise(function(resolve) {
+		mkdirp(path, function(err) {
+			if (err)
+				throw err;
+			this._taskArchivePath = path;
+			this._resolveTaskArchivePathSet();
+			resolve();
+		}.bind(this));
+	}.bind(this));
 };
 
 PersistentTaskContext.prototype._archiveTask = function(task) {
@@ -67,29 +72,32 @@ PersistentTaskContext.prototype.getTasks = function(offset, count) {
 			count -= tasks.length;
 		}
 		
-		if (count > 0 && this._taskArchivePath) {
-			// we need tasks from disk
-			fs.readdir(this._taskArchivePath, function(err, files) {
-				if (err)
-					reject(err);
-				try {
-					var previousPromise = new Promise(function(r) { r();});
-					files.reverse(); // newest first
-					files.slice(offset, offset + count).forEach(function(fileName) {
-						if (fileName.substr(-5) != '.yaml')
-							return;
-						var id = fileName.substr(0, fileName.length - 5);
-						if (tasks.some(function(t) { return t.id == id;}))
-							return // task is already included
-						
-						previousPromise = previousPromise
-							.then(function() { return this.getTask(id); }.bind(this))
-							.then(function(task) { tasks.push(task);});
-					}.bind(this));
-					previousPromise.then(function() { resolve(tasks);}, reject);
-				} catch (e) {
-					reject(e);
-				}
+		// when an archive path is set, wait until it is initialized
+		if (count > 0 && this._taskArchivePathInitialized) {
+			this._taskArchivePathInitialized.then(function() {
+				// we need tasks from disk
+				fs.readdir(this._taskArchivePath, function(err, files) {
+					if (err)
+						reject(err);
+					try {
+						var previousPromise = new Promise(function(r) { r();});
+						files.reverse(); // newest first
+						files.slice(offset, offset + count).forEach(function(fileName) {
+							if (fileName.substr(-5) != '.yaml')
+								return;
+							var id = fileName.substr(0, fileName.length - 5);
+							if (tasks.some(function(t) { return t.id == id;}))
+								return // task is already included
+							
+							previousPromise = previousPromise
+								.then(function() { return this.getTask(id); }.bind(this))
+								.then(function(task) { tasks.push(task);});
+						}.bind(this));
+						previousPromise.then(function() { resolve(tasks);}, reject);
+					} catch (e) {
+						reject(e);
+					}
+				}.bind(this));
 			}.bind(this));
 		} else
 			resolve(tasks);
@@ -108,18 +116,21 @@ PersistentTaskContext.prototype.getTask = function(id) {
 };
 
 PersistentTaskContext.prototype.count = function() {
-	return new Promise(function(resolve, reject) {
-		if (!this._taskArchivePath)
-			resolve(this._tasksInMemory.length);
-		
-		fs.readdir(this._taskArchivePath, function(err, files) {
-			if (err)
-				reject(err);
-			// remove the tasks that are still in memory
-			files = files.filter(function(name) { 
-				return !this._tasksInMemory.some(function(t) { return t.id + '.yaml' == name;});
+	if (!this._taskArchivePathInitialized)
+		return new Promise(function(resolve) { resolve(this._tasksInMemory.length) }.bind(this));
+
+	return this._taskArchivePathInitialized
+	.then(function() {
+		return new Promise(function(resolve, reject) {
+			fs.readdir(this._taskArchivePath, function(err, files) {
+				if (err)
+					return reject(err);
+				// remove the tasks that are still in memory
+				files = files.filter(function(name) { 
+					return !this._tasksInMemory.some(function(t) { return t.id + '.yaml' == name;});
+				}.bind(this));
+				resolve(files.length + this._tasksInMemory.length);
 			}.bind(this));
-			resolve(files.length + this._tasksInMemory.length);
 		}.bind(this));
 	}.bind(this));
 };
