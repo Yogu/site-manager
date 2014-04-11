@@ -17,15 +17,10 @@ describe("ShellTask", function() {
 	
 	it("logs the command, stdout and stderr", function(done) {
 		var task = new ShellTask('echo "bad" >&2 ; echo "good"');
-		var log = [];
-		task.on("log", function(message) {
-			log.push(message);
-		});
 		
 		task.start();
 		task.then(function() {
-			expect(log).toEqual(["stdout: good\n",
-			                     "stderr: bad\n"]);
+			expect(task.log).toEqual("stdout: good\nstderr: bad\n");
 			done();
 		});
 	});
