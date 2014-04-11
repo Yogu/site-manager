@@ -6,6 +6,14 @@ define([ 'angular', 'model' ], function(angular) {
 			$scope.sites = model.sites;
 		} ])
 		
+		.controller('GlobalTasksCtrl', [ '$scope', 'model', function($scope, model) {
+			$scope.tasks = model.tasks;
+			$scope.hide = function(task) {
+				task.alertIsHidden = true;
+			};
+			$scope.isVisible = function(task) { return !task.alertIsHidden; };
+		} ])
+		
 		.controller('SiteListCtrl', [ '$scope', 'model', function($scope, model) {
 			$scope.sites = model.sites;
 		} ])

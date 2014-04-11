@@ -1,6 +1,6 @@
-define([ 'angular', 'model', 'controllers', 'angularRoute' ],
+define([ 'angular', 'model', 'controllers', 'angularRoute', 'angularFilters' ],
 function(angular, model, controllers) {
 	'use strict';
 
-	return angular.module('myApp', [ 'ngRoute', 'myApp.controllers', 'myApp.model' ]);
+	return angular.module('myApp', [ 'ngRoute', 'myApp.controllers', 'myApp.model', 'frapontillo.ex.filters' ]);
 });

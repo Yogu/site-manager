@@ -6,11 +6,13 @@ function Task(name, perform) {
 	Promise.call(this, function(resolve, reject) {
 		this._resolve = function() {
 			this.status = 'done';
+			this._events.emit('status');
 			resolve.apply(this, arguments);
 		}.bind(this); 
 		
 		this._reject = function() {
 			this.status = 'failed';
+			this._events.emit('status');
 			reject.apply(this, arguments);
 		}.bind(this);
 	}.bind(this));
@@ -37,6 +39,7 @@ Task.prototype.start = function() {
 		throw new Error("Tasks must have a perform() method");
 	
 	this.status = 'running';
+	this._events.emit('status');
 	
 	try {
 		this.perform(this._resolve, this._reject);

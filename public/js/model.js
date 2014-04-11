@@ -1,10 +1,14 @@
-define(['angular'], function(angular) {
-	angular.module('myApp.model', []).factory('model', ['$http', '$timeout', function($http, $timeout) {
+define(['angular', 'socket'], function(angular) {
+	angular.module('myApp.model', ['socket']).factory('model', ['$http', 'socket',
+			function($http, socket) {
+		
 		var exports = {
 			sites: [ ],
 			
+			tasks: [ ],
+			
 			/**
-			 * Promies to be fulfilled when the sites are initially loaded
+			 * Promise being fulfilled when the sites are initially loaded
 			 */
 			loaded: $http.get('api/sites').success(function(data) {
 				// do not break existing references
@@ -18,6 +22,32 @@ define(['angular'], function(angular) {
 				});
 			})
 		};
+		
+		socket.on('task:schedule', function(task) {
+			console.log(task);
+			exports.tasks.unshift(task);
+		});
+		
+		function findTask(id) {
+			var tasks = exports.tasks.filter(function(task) { return task.id == id;});
+			if (tasks.length)
+				return tasks[0];
+			return null;
+		}
+		
+		socket.on('task:status', function(taskID, status) {
+			var existing = findTask(taskID);
+			if (existing) {
+				existing.status = status;
+				console.log(existing);
+			}
+		});
+		
+		socket.on('task:log', function(taskID, message) {
+			var existing = findTask(taskID);
+			if (existing)
+				existing.log.push(message);
+		});
 		
 		return exports;
 	}]);

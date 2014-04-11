@@ -10,6 +10,8 @@ function TaskContext() {
 TaskContext.prototype = Object.create(EventEmitter.prototype);
 
 TaskContext.prototype.schedule = function(task) {
+	task.context = this;
+	this.emit('schedule', task);
 	if (this.isBusy) {
 		this._queue.push(task);
 	} else {
@@ -25,7 +27,7 @@ TaskContext.prototype._runNextTask = function() {
 		this.isBusy = false;
 		this.emit('status');
 	} else {
-		var task = this._queue.pop();
+		var task = this._queue.shift();
 		this._runTask(task);
 	}
 };

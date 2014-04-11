@@ -33,18 +33,21 @@ SiteManager.prototype.loadTask = function() {
 					var siteConfig = config.sites[name] || {};
 					var sitePath = path.resolve(self._siteRoot, siteConfig.root ? siteConfig.root : name);
 						
+					var existingSites = self.sites.filter(function(s) { return s.name == name});
 					var site;
-					if (name in self.sites) {
-						site = self.sites[name];
+					if (existingSites.length > 0) {
+						site = existingSites[0];
 						site.path = sitePath;
-					} else
+					} else {
 						site = new Site(name, sitePath);
+						self.emit('siteAdded', site);
+					}
 					
 					site.schedule(site.loadTask());
 					newSites.push(site);
 				}
-				self.sites = newSites;
 				self.emit('load');
+				self.sites = newSites;
 				resolve();
 			} catch (e) {
 				reject(e);

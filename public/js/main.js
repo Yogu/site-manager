@@ -3,14 +3,17 @@ requirejs.config({
 		angular: '../bower_components/angular/angular',
 		angularRoute: '../bower_components/angular-route/angular-route',
 		angularMocks: '../bower_components/angular-mocks/angular-mocks',
+		angularFilters: '../bower_components/angular-filters/dist/angular-filters',
 		jquery: '../bower_components/jquery/dist/jquery',
 		bootstrap: '../bower_components/bootstrap/dist/js/bootstrap',
-		es6promise: '../bower_components/es6-promise/promise'
+		es6promise: '../bower_components/es6-promise/promise',
+		socketio: '/socket.io/socket.io'
 	},
 	shim: {
         bootstrap: ['jquery'],
         angular: { exports: 'angular' },
     	angularRoute: ['angular'],
+    	angularFilters: ['angular'],
         main: {
         	// compatibility
         	deps: ['es6promise']
