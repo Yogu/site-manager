@@ -63,3 +63,10 @@ exports.use = function(callback) {
 		}.bind(this));
 	}.bind(this));
 };
+
+exports.withEmptyDir = function(callback) {
+	workdirCleared.then(function() {
+		var path = getNewWorkdirPath();
+		fs.mkdir(path, function(err) { if (err) throw err; callback(path); });
+	});
+};
