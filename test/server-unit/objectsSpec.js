@@ -50,14 +50,6 @@ describe('objects.extract()', function() {
 		expect(extract({a: 1, b: 2, _b: 4, c: {a: 1}, d: [1, 2]}, '*')).toEqual({a: 1, b: 2});
 	});
 	
-	it("supports promises", function(done) {
-		var promise = new Promise(function(resolve) { resolve( { a: 1, b: 2 } ); });
-		extract(promise, 'a').then(function(result) {
-			expect(result).toEqual({a: 1});
-			done();
-		}).catch(function(e) { this.fail(e); done(); }.bind(this));
-	});
-	
 	it('works with deep objects', function() {
 		var source = {customers: [ {
 				name: 'John Doe',

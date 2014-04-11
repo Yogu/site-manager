@@ -2,12 +2,6 @@ require('./compat.js');
 var Promise = require('es6-promise').Promise;
 
 function extract(object, properties) {
-	if (object instanceof Promise) {
-		return object.then(function(realObject) {
-			return extract(realObject, properties);
-		});
-	}
-	
 	var dest = {};
 	
 	if (typeof properties == 'string')
