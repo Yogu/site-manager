@@ -10,7 +10,13 @@ var Promise = require('es6-promise').Promise;
  */
 function PersistentTaskContext(path) {
 	TaskContext.call(this);
-	this.taskArchivePath = path;
+	this._taskArchivePath = path;
+	this._taskArchivePathSet = new Promise(function(resolve) { 
+		if (path)
+			resolve();
+		else
+			this._resolveTaskArchivePathSet = resolve;
+	}.bind(this));
 	this._tasksInMemory = [];
 	
 	this.on('schedule', function(task) {
@@ -23,8 +29,17 @@ function PersistentTaskContext(path) {
 
 PersistentTaskContext.prototype = Object.create(TaskContext.prototype);
 
+PersistentTaskContext.prototype.setTaskArchivePath = function(path) {
+	this._taskArchivePath = path;
+	if (this._resolveTaskArchivePathSet)
+		this._resolveTaskArchivePathSet();
+};
+
 PersistentTaskContext.prototype._archiveTask = function(task) {
-	this._saveTask(task)
+	this._taskArchivePathSet
+		.then(function() {
+			return this._saveTask(task);
+		}.bind(this))
 		.then(function() {
 			this._tasksInMemory = this._tasksInMemory.filter(function(t) { return t != task; });
 		}.bind(this))
@@ -33,7 +48,7 @@ PersistentTaskContext.prototype._archiveTask = function(task) {
 
 PersistentTaskContext.prototype._saveTask = function(task) {
 	return new Promise(function(resolve, reject) {
-		var path = this.taskArchivePath + '/' + task.id + '.yaml';
+		var path = this._taskArchivePath + '/' + task.id + '.yaml';
 		var serialized = yaml.safeDump(objects.extract(task, ['id', 'name', 'status', 'log']));
 		
 		fs.writeFile(path, serialized, function(err) {
@@ -52,9 +67,9 @@ PersistentTaskContext.prototype.getTasks = function(offset, count) {
 			count -= tasks.length;
 		}
 		
-		if (count > 0) {
+		if (count > 0 && this._taskArchivePath) {
 			// we need tasks from disk
-			fs.readdir(this.taskArchivePath, function(err, files) {
+			fs.readdir(this._taskArchivePath, function(err, files) {
 				if (err)
 					reject(err);
 				try {
@@ -83,7 +98,7 @@ PersistentTaskContext.prototype.getTasks = function(offset, count) {
 
 PersistentTaskContext.prototype.getTask = function(id) {
 	return new Promise(function(resolve, reject) {
-		fs.readFile(this.taskArchivePath + '/' + id + '.yaml', 'utf8', function(err, data) {
+		fs.readFile(this._taskArchivePath + '/' + id + '.yaml', 'utf8', function(err, data) {
 			if (err)
 				reject(err);
 			var task = yaml.safeLoad(data);
@@ -94,7 +109,10 @@ PersistentTaskContext.prototype.getTask = function(id) {
 
 PersistentTaskContext.prototype.count = function() {
 	return new Promise(function(resolve, reject) {
-		fs.readdir(this.taskArchivePath, function(err, files) {
+		if (!this._taskArchivePath)
+			resolve(this._tasksInMemory.length);
+		
+		fs.readdir(this._taskArchivePath, function(err, files) {
 			if (err)
 				reject(err);
 			// remove the tasks that are still in memory

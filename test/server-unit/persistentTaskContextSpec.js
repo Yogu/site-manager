@@ -4,6 +4,41 @@ var resources = require('./utils/resources.js');
 var Promise = require('es6-promise').Promise;
 
 describe('PersistentTaskContext', function() {
+	it("does not archive anything until path is set", function(done) {
+		resources.withEmptyDir(function(path) {
+			var context = new PersistentTaskContext();
+			var task1 = new Task('deferred-archiving', function(resolve) { resolve(); });
+			context.schedule(task1);
+			
+			new Promise(function(resolve) { setTimeout(resolve, 0); }) // let it try to save
+				.then(function() {
+					return context.count()
+				})
+				.then(function(count) {
+					expect(count).toBe(1);
+					return context.getTasks(0, 10);
+				})
+				.then(function(tasks) {
+					expect(tasks.length).toBe(1);
+					expect(tasks[0]).toBe(task1);
+					
+					// now give it the path
+					context.setTaskArchivePath(path);
+					// give it time to save
+					return new Promise(function(resolve) { setTimeout(resolve, 200); });
+				})
+				.then(function() {
+					var context = new PersistentTaskContext(path);
+					return context.count();
+				})
+				.then(function(count) {
+					expect(count).toBe(1);
+				})
+				.catch(function(err) { this.fail(err); }.bind(this))
+				.then(done);
+		}.bind(this));
+	});
+
 	it("lists active tasks", function(done) {
 		resources.withEmptyDir(function(path) {
 			var context = new PersistentTaskContext(path);
