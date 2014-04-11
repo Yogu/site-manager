@@ -28,7 +28,7 @@
 	"scripts": {
 		"postinstall": "bower install",
 		
-		"server-unit-test": "istanbul cover -x 'test/**' jasmine-node --captureExceptions test/server-unit",
+		"server-unit-test": "istanbul cover -x 'test/**' jasmine-node -- --captureExceptions test/server-unit",
 		"client-unit-test": "karma start test/karma-conf.js",
 		"end-to-end-test": "webdriver-manager update && protractor test/protractor-conf.js --browser=${BROWSER-chrome}",
 		"test": "npm run server-unit-test && npm run client-unit-test && npm run end-to-end-test",
