@@ -46,8 +46,8 @@ SiteManager.prototype.loadTask = function() {
 					site.schedule(site.loadTask());
 					newSites.push(site);
 				}
-				self.emit('load');
 				self.sites = newSites;
+				self.emit('load');
 				resolve();
 			} catch (e) {
 				reject(e);
