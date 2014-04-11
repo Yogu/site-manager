@@ -21,6 +21,13 @@ function Task(name, perform) {
 	this._events = new EventEmitter();
 	this.id = Task._nextTaskID++;
 	this.log = '';
+	
+	// single callback argument?
+	if (name instanceof Function) {
+		perform = name;
+		name = undefined;
+	}
+	
 	if (name)
 		this.name = name;
 	else

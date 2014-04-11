@@ -13,6 +13,30 @@ describe("Task", function(done) {
 		expect(task1.name).not.toEqual(task2.name);
 	});
 	
+	it("accepts name as constructor argument", function() {
+		var task = new Task("the name");
+		expect(task.name).toEqual("the name");
+	});
+	
+	it("accepts callback as constructor argument", function(done) {
+		var task = new Task(function(resolve) { resolve(123); });
+		task.start();
+		task.then(function(result) {
+			expect(result).toBe(123);
+			done();
+		}, function(err) { this.fail(err); done(); }.bind(this));
+	});
+	
+	it("accepts both name and callback as constructor argument", function(done) {
+		var task = new Task("the name", function(resolve) { resolve(123); });
+		expect(task.name).toEqual("the name");
+		task.start();
+		task.then(function(result) {
+			expect(result).toBe(123);
+			done();
+		}, function(err) { this.fail(err); done(); }.bind(this));
+	});
+	
 	it("is ready after creation", function() {
 		var task = new Task();
 		expect(task.status).toEqual("ready");
