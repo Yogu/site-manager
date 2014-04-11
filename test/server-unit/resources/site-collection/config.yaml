@@ -1,5 +1,6 @@
 ---
 siteRoot: sites
+logRoot: logs
 repo: repo.git
 sites:
   test:

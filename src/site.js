@@ -1,9 +1,9 @@
-var TaskContext = require('./taskContext.js');
+var PersistentTaskContext = require('./persistentTaskContext.js');
 var Task = require('./task.js');
 var LoadSiteTask = require('./tasks/loadSite.js');
 
 function Site(name, path) {
-	TaskContext.call(this);
+	PersistentTaskContext.call(this);
 	this.name = name;
 	this.path = path;
 	
@@ -14,7 +14,7 @@ function Site(name, path) {
 	this.branch = 'master';
 }
 
-Site.prototype = Object.create(TaskContext.prototype);
+Site.prototype = Object.create(PersistentTaskContext.prototype);
 
 Site.prototype.loadTask = function() {
 	return new LoadSiteTask(this);
