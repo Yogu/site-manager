@@ -16,7 +16,7 @@ SiteManager.prototype = Object.create(TaskContext.prototype);
 SiteManager.prototype.loadTask = function() {
 	var self = this;
 	return new Task("Load config", function(resolve, reject) {
-		this.log('Loading config.yaml...');
+		this.doLog('Loading config.yaml...');
 		fs.readFile(self.path + '/config.yaml', 'utf8', function(err, data) {
 			try {
 				if (err)
@@ -33,7 +33,7 @@ SiteManager.prototype.loadTask = function() {
 					var siteConfig = config.sites[name] || {};
 					var sitePath = path.resolve(self._siteRoot, siteConfig.root ? siteConfig.root : name);
 						
-					var existingSites = self.sites.filter(function(s) { return s.name == name});
+					var existingSites = self.sites.filter( function(s) { return s.name == name; } );
 					var site;
 					if (existingSites.length > 0) {
 						site = existingSites[0];

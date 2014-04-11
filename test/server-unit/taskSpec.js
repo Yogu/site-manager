@@ -102,18 +102,32 @@ describe("Task", function(done) {
 		});
 	});
 	
-	it("emits event when log() is called", function(done) {
+	it("emits event when doLog() is called", function(done) {
 		var task = new Task();
-		task.perform = function(resolve, reject) { this.log("The message"); resolve(); };
-		var messageReceived = false;
+		task.perform = function(resolve, reject) { this.doLog("The message\nsecond line"); resolve(); };
+		var logEmits = 0;
 		task.on("log", function(message) {
-			expect(messageReceived).toBe(false);
-			expect(message).toBe("The message");
-			messageReceived = true;
+			expect(logEmits).toBeLessThan(2);
+			if (logEmits == 0)
+				expect(message).toBe("The message");
+			else
+				expect(message).toBe('second line');
+			logEmits++;
 		});
 		task.start();
 		task.then(function() {
-			expect(messageReceived).toBe(true);
+			expect(logEmits).toBe(2);
+			done();
+		});
+	});
+	
+	it("collects logs called by doLog()", function(done) {
+		var task = new Task();
+		task.perform = function(resolve, reject) { this.doLog("first"); this.doLog("second"); resolve(); };
+		
+		task.start();
+		task.then(function() {
+			expect(task.log).toBe("first\nsecond\n");
 			done();
 		});
 	});
@@ -126,33 +140,30 @@ describe("Task", function(done) {
 		var badChild = new Task();
 		badChild.name = 'bad-child';
 		parent.perform = function(resolve) {
-			this.log('before');
+			this.doLog('before');
 			this.runNested(goodChild).then(function(argument) {
 				expect(argument).toBe('good');
-				this.log('between');
+				this.doLog('between');
 				return this.runNested(badChild);
 			}.bind(this)).catch(function(argument) {
 				expect(argument).toBe('bad');
-				this.log('after');
+				this.doLog('after');
 				resolve();
 			}.bind(this));
 		};
 		goodChild.perform = function(resolve) {
-			this.log('good child');
+			this.doLog('good child');
 			resolve('good');
 		};
 		badChild.perform = function(resolve, reject) {
-			this.log('bad child');
+			this.doLog('bad child');
 			reject('bad');
 		};
 		var log = [];
-		parent.on('log', function(message) {
-			log.push(message);
-		});
 		
 		parent.start();
 		parent.then(function() {
-			expect(log).toEqual(['before',
+			expect(parent.log).toEqual(['before',
 			                    'Starting nested task good-child',
 			                    '  good child',
 			                    'Nested task good-child succeeded',
@@ -160,9 +171,9 @@ describe("Task", function(done) {
 			                    'Starting nested task bad-child',
 			                    '  bad child',
 			                    'Nested task bad-child failed: bad',
-			                    'after']);
+			                    'after', ''].join("\n"));
 			done();
-		});
+		}, function(e) { this.fail(e); }.bind(this));
 	});
 	
 	it("provides shorthand to execute shell scripts", function(done) {

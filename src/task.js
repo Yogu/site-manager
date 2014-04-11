@@ -20,6 +20,7 @@ function Task(name, perform) {
 	this.status = 'ready';
 	this._events = new EventEmitter();
 	this.id = Task._nextTaskID++;
+	this.log = '';
 	if (name)
 		this.name = name;
 	else
@@ -60,21 +61,26 @@ Task.prototype.once = function() {
 	this._events.once.apply(this._events, arguments);
 };
 
-Task.prototype.log = function(message) {
-	this._events.emit('log', message);
+Task.prototype.doLog = function(message) {
+	message.split('\n').forEach(function(line) {
+		if (line == '')
+			return;
+		this.log += line + "\n";
+		this._events.emit('log', line);
+	}.bind(this));
 };
 
 Task.prototype.runNested = function(task) {
 	task.on('log', function(message) {
-		this.log('  ' + message);
+		this.doLog('  ' + message);
 	}.bind(this));
-	this.log('Starting nested task ' + task.name);
+	this.doLog('Starting nested task ' + task.name);
 	task.start();
 	return task.then(function(result) {
-		this.log('Nested task ' + task.name + ' succeeded');
+		this.doLog('Nested task ' + task.name + ' succeeded');
 		return result;
 	}.bind(this), function(e) {
-		this.log('Nested task ' + task.name + ' failed' + (e ? ': ' + e : ''));
+		this.doLog('Nested task ' + task.name + ' failed' + (e ? ': ' + e : ''));
 		throw e;
 	}.bind(this));
 };

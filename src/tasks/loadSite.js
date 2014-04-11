@@ -64,7 +64,7 @@ LoadSiteTask.prototype._getIsClean = function() {
 		}.bind(this), function(e) {
 			if (e.code == 1) {
 				this.site.isClean = false;
-				this.log('This site is dirty (hence the error)');
+				this.doLog('This site is dirty (hence the error)');
 				resolve();
 			} else {
 				reject();
