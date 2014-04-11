@@ -20,7 +20,11 @@ define(['angular', 'socket'], function(angular) {
 						newSite = angular.extend(existingSites[newSite.name], newSite);
 					exports.sites.push(newSite);
 				});
-			})
+			}),
+			
+			reload: function() {
+				$http.post('api/reload');
+			}
 		};
 		
 		socket.on('task:schedule', function(task) {

@@ -16,6 +16,9 @@ define([ 'angular', 'model' ], function(angular) {
 		
 		.controller('SiteListCtrl', [ '$scope', 'model', function($scope, model) {
 			$scope.sites = model.sites;
+			$scope.reload = function() {
+				model.reload();
+			};
 		} ])
 		
 		.controller('SiteOverviewCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {

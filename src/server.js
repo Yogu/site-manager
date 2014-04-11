@@ -27,6 +27,10 @@ exports.start = function(port, dir) {
 		});
 	});
 	
+	app.post('/api/reload', function(req, res) {
+		controller.reload();
+		res.send(202 /* accepted */);
+	});
 	
 	controller.on('task:schedule', function(task) {
 		var context = task.context;

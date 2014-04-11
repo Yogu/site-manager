@@ -5,6 +5,7 @@ var Promise = require('es6-promise').Promise;
 function LoadSiteTask(site) {
 	Task.call(this);
 	this.site = site;
+	this.name = 'Load';
 }
 
 LoadSiteTask.prototype = Object.create(Task.prototype);

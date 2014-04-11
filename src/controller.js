@@ -36,4 +36,8 @@ Controller.prototype._initTaskContextHandlers = function(taskContext) {
 	}.bind(this));
 };
 
+Controller.prototype.reload = function() {
+	this.manager.schedule(this.manager.loadTask());
+};
+
 module.exports = Controller;
