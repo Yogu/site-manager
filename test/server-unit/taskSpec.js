@@ -188,13 +188,13 @@ describe("Task", function(done) {
 		parent.start();
 		parent.then(function() {
 			expect(parent.log).toEqual(['before',
-			                    'Starting nested task good-child',
+			                    'run: good-child',
 			                    '  good child',
-			                    'Nested task good-child succeeded',
+			                    'ok',
 			                    'between',
-			                    'Starting nested task bad-child',
+			                    'run: bad-child',
 			                    '  bad child',
-			                    'Nested task bad-child failed: bad',
+			                    'failed: bad',
 			                    'after', ''].join("\n"));
 			done();
 		}, function(e) { this.fail(e); }.bind(this));

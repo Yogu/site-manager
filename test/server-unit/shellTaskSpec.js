@@ -20,7 +20,7 @@ describe("ShellTask", function() {
 		
 		task.start();
 		task.then(function() {
-			expect(task.log).toEqual("stdout: good\nstderr: bad\n");
+			expect(task.log).toEqual("good\nbad\n");
 			done();
 		});
 	});

@@ -16,9 +16,9 @@ ShellTask.prototype.perform = function(resolve, reject) {
 		options.cwd = this.cwd;
 	exec(this.command, options, function(error, stdout, stderr) {
 		if (stdout)
-			this.doLog("stdout: " + stdout);
+			this.doLog(stdout);
 		if (stderr)
-			this.doLog("stderr: " + stderr);
+			this.doLog(stderr);
 		if (error !== null) {
 			reject(error);
 		} else {
