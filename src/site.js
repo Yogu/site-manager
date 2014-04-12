@@ -11,7 +11,10 @@ function Site(name, path) {
 	this.aheadBy = null;
 	this.behindBy = null;
 	this.revision = null;
-	this.branch = 'master';
+	this.branch = null;
+	this.remoteRevision = null;
+	this.isLoaded = false;
+	this.isLoadFailed = false;
 }
 
 Site.prototype = Object.create(PersistentTaskContext.prototype);

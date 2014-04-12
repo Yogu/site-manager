@@ -25,6 +25,17 @@ define([ 'angular', 'model' ], function(angular) {
 			model.getSite($routeParams.site).then(function(site) {
 				$scope.site = site;
 			});
+			$scope.status = function(site) {
+				if (!site.branch)
+					return 'not tracking any branch';
+				if (site.aheadBy > 0)
+					return 'error: ahead by ' + site.aheadBy + ' commits';
+				if (!site.isClean)
+					return 'error: uncommitted changes';
+				if (site.behindBy == 0)
+					return 'up to date';
+				return 'upgrade available (' + site.behindBy + ' commits), to ' + site.upstreamRevision;
+			};
 		} ])
 		
 		.controller('SiteTasksCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {

@@ -17,9 +17,12 @@ LoadSiteTask.prototype.perform = function(resolve, reject) {
 	this._fetch()
 		.then(function() { return self._getRevision(); })
 		.then(function() { return self._getBranch(); })
+		.then(function() { return self._getUpstreamRevision(); })
 		.then(function() { return self._getAheadBy(); })
 		.then(function() { return self._getBehindBy(); })
 		.then(function() { return self._getIsClean(); })
+		.then(function() { self.site.isLoaded = true; })
+		.catch(function(err) { self.site.isLoadFailed = true; throw err; })
 		.then(resolve, reject);
 };
 
@@ -37,6 +40,12 @@ LoadSiteTask.prototype._getBranch = function() {
 LoadSiteTask.prototype._getRevision = function() {
 	return this.exec("git rev-parse HEAD").then(function(result) {
 		this.site.revision = result.trim();
+	}.bind(this));
+};
+
+LoadSiteTask.prototype._getUpstreamRevision = function() {
+	return this.exec("git rev-parse origin/" + this.site.branch).then(function(result) {
+		this.site.upstreamRevision = result.trim();
 	}.bind(this));
 };
 

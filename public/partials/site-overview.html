@@ -1,10 +1,18 @@
 <h1 class="site-title">Site {{site.name}}</h1>
 
-<dl>
-	<dt>Branch:</dt>
-	<dd>{{site.branch}}</dd>
-	<dt>Revision:</dt>
-	<dd>{{site.revision}}</dd>
-	<dt>Upgrade Status:</dt>
-	<dd>{{getUpgradeStatus(site)}}</dd>
-</dl>
+<div ng-if="site.isLoaded">
+	<dl class="dl-horizontal">
+		<dt>Branch:</dt>
+		<dd>{{site.branch}}</dd>
+		<dt>Revision:</dt>
+		<dd>{{site.revision}}</dd>
+		<dt>Upgrade Status:</dt>
+		<dd>{{status(site)}}</dd>
+	</dl>
+</div>
+<div ng-if="!site.isLoaded && !site.isLoadFailed">
+	<span>loading...</span>
+</div>
+<div ng-if="site.isLoadFailed">
+	<span>failed to load (see <a href="#/sites/{{site.name}}/tasks">tasks</a>)</span>
+</div>
