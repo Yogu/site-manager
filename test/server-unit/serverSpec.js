@@ -6,7 +6,6 @@ describe("server", function() {
 		resources.use(function(path) {
 			try {
 				var server = Server.start(12345, path + '/site-collection');
-				console.log(server);
 				server.close();
 			} catch (e) {
 				this.fail(e);

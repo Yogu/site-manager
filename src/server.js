@@ -44,6 +44,17 @@ exports.start = function(port, dir) {
 		});
 	});
 	
+	app.get('/api/tasks', function(req, res) {
+		controller.manager.getTasks(0, 20)
+		.then(function(tasks) {
+			res.json(objects.extract( { tasks: tasks }, {'tasks[]': '*'}));
+		})
+		.catch(function(e) {
+			console.error(e.stack);
+			res.send(500);
+		});
+	});
+	
 	app.get('/api/sites/:site/tasks', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {
@@ -63,6 +74,17 @@ exports.start = function(port, dir) {
 		.then(function(site) {
 			return site.getTask(req.params.id);
 		})
+		.then(function(task) {
+			res.json(objects.extract(task, '*'));
+		})
+		.catch(function(e) {
+			console.error(e.stack);
+			res.send(500);
+		});
+	});
+	
+	app.get('/api/tasks/:id', function(req, res) {
+		controller.manager.getTask(req.params.id)
 		.then(function(task) {
 			res.json(objects.extract(task, '*'));
 		})

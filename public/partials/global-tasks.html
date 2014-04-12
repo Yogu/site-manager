@@ -1,12 +1,11 @@
 <h1 class="site-title">
-	<a href="#/sites">sites</a> / 
-	<a href="#/sites/{{site.name}}">{{site.name}}</a> / 
 	tasks
 </h1>
 
 <div ng-repeat="task in tasks" ng-class="'alert alert-'+(task.status == 'done' ? 'success' : task.status == 'failed' ? 'danger' : 'info')">
 	<span ng-class="'glyphicon glyphicon-' + (task.status == 'done' ? 'ok' : task.status == 'failed' ? 'exclamation-sign' : task.status == 'running' ? 'play' : 'time')"></span>
-	<a href="#/sites/{{site.name}}/tasks/{{task.id}}">
+	<strong ng-if="task.site"><a href="#/sites/{{task.site}}">{{task.site}}</a>:</strong>
+	<a href="#/tasks/{{task.site ? 'sites/' + task.site + '/' : ''}}{{task.id}}">
 		{{task.name}} ({{task.status}})
 	</a>
 </div>

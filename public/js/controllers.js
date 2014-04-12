@@ -6,7 +6,7 @@ define([ 'angular', 'model' ], function(angular) {
 			$scope.sites = model.sites;
 		} ])
 		
-		.controller('GlobalTasksCtrl', [ '$scope', 'model', function($scope, model) {
+		.controller('TaskAlertsCtrl', [ '$scope', 'model', function($scope, model) {
 			$scope.tasks = model.tasks;
 			$scope.hide = function(task) {
 				task.alertIsHidden = true;
@@ -52,7 +52,21 @@ define([ 'angular', 'model' ], function(angular) {
 			});
 		} ])
 		
-		.controller('TaskCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
+		.controller('GlobalTasksCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
+			model.getGlobalTasks()
+			.then(function(tasks) {
+				$scope.tasks = tasks;
+			});
+		} ])
+		
+		.controller('GlobalTaskCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
+			model.getTask(null, $routeParams.id)
+			.then(function(task) {
+				$scope.task = task;
+			});
+		} ])
+		
+		.controller('SiteTaskCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
 			model.getSite($routeParams.site)
 			.then(function(site) {
 				$scope.site = site;

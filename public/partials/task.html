@@ -1,7 +1,12 @@
 <h1 class="site-title">
-	<a href="#/sites">sites</a> / 
-	<a href="#/sites/{{site.name}}">{{site.name}}</a> / 
-	<a href="#/sites/{{site.name}}/tasks">tasks</a> / 
+	<span ng-if="site">
+		<a href="#/sites">sites</a> / 
+		<a href="#/sites/{{site.name}}">{{site.name}}</a> / 
+		<a href="#/sites/{{site.name}}/tasks">tasks</a> / 
+	</span>
+	<span ng-if="!site">
+		<a href="#/tasks">tasks</a> /
+	</span>
 	<span ng-class="'glyphicon glyphicon-' + (task.status == 'done' ? 'ok' : task.status == 'failed' ? 'exclamation-sign' : task.status == 'running' ? 'play' : 'time')"></span>
 	{{task.name}}
 </h1>

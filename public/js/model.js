@@ -49,7 +49,9 @@ define(['angular', 'socket'], function(angular) {
 					return deferred.promise;
 				}
 				
-				return $http.get('api/sites/' + site.name + '/tasks/' + id)
+				var url = site ? 'sites/' + site.name + '/tasks' : 'tasks';
+				
+				return $http.get('api/' + url + '/' + id)
 				.then(function(res) {
 					if (!findTask(id)) { // check again if it exists now
 						res.data.alertIsHidden = true; // should not be displayed in the alert bar
@@ -62,6 +64,14 @@ define(['angular', 'socket'], function(angular) {
 			
 			getSiteTasks: function(site) {
 				return $http.get('api/sites/' + site.name + '/tasks')
+				.then(function(res) {
+					return res.data.tasks;
+				});
+			},
+			
+			getGlobalTasks: function() {
+				// TODO: this could sometime fetch all tasks
+				return $http.get('api/tasks')
 				.then(function(res) {
 					return res.data.tasks;
 				});
