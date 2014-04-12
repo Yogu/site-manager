@@ -46,5 +46,5 @@ describe("Site", function() {
 			.catch(function(err) { this.fail(err); }.bind(this))
 			.then(done);
 		}.bind(this));
-	});
+	}, 5000);
 });
