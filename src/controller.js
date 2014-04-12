@@ -27,7 +27,7 @@ Controller.prototype._initTaskContextHandlers = function(taskContext) {
 		this.emit('task:schedule', task);
 		
 		task.on('log', function(message) {
-			this.emit('task:log', task.id, message);
+			this.emit('task:log', task, message);
 		}.bind(this));
 
 		task.on('status', function() {

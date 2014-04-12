@@ -44,7 +44,7 @@ exports.start = function(port, dir) {
 	});
 	
 	controller.on('task:log', function(task, message) {
-		io.sockets.emit('task:status', task.id, message);
+		io.sockets.emit('task:log', task.id, message);
 	});
 	
 	return server;
