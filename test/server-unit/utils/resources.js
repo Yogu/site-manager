@@ -6,7 +6,10 @@ var ncp = require('ncp');
 var Promise = require('es6-promise').Promise;
 
 var resourceSourcePath = Path.resolve(__dirname, '../resources');
-var workdirPath = Path.resolve(__dirname, '../workdir');
+if (process.env.TMP_PATH)
+	var workdirPath = Path.resolve(process.env.TMP_PATH, 'workdir');
+else
+	var workdirPath = Path.resolve(__dirname, '../workdir');
 
 // clear workdir at the beginning of the tests, so that all files created
 // during the tests are accessible after it
