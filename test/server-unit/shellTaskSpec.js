@@ -1,11 +1,11 @@
 var ShellTask = require('../../src/tasks/shell.js');
 
 describe("ShellTask", function() {
-	it("returns the stdout", function(done) {
-		var task = new ShellTask('echo "hi"');
+	it("returns stdout and stderr", function(done) {
+		var task = new ShellTask('echo "hi"; echo "ho" >&2');
 		task.start();
-		task.then(function(stdout) {
-			expect(stdout).toEqual("hi\n");
+		task.then(function(result) {
+			expect(result).toEqual({stdout: "hi\n", stderr: "ho\n"});
 			done();
 		});
 	});
@@ -37,8 +37,8 @@ describe("ShellTask", function() {
 	it("respects cwd parameter", function(done) {
 		var task = new ShellTask('pwd', '/usr/bin');
 		task.start();
-		task.then(function(stdout) {
-			expect(stdout.trim()).toEqual("/usr/bin");
+		task.then(function(result) {
+			expect(result.stdout.trim()).toEqual("/usr/bin");
 			done();
 		});
 	});

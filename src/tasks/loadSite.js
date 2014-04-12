@@ -38,33 +38,33 @@ LoadSiteTask.prototype._fetch = function() {
 LoadSiteTask.prototype._getBranch = function() {
 	return this.exec("git rev-parse --abbrev-ref HEAD")
 		.then(function(result) {
-			this.site.branch = result.trim();
+			this.site.branch = result.stdout.trim();
 		}.bind(this));
 };
 
 LoadSiteTask.prototype._getRevision = function() {
 	return this.exec("git rev-parse HEAD").then(function(result) {
-		this.site.revision = result.trim();
+		this.site.revision = result.stdout.trim();
 	}.bind(this));
 };
 
 LoadSiteTask.prototype._getUpstreamRevision = function() {
 	return this.exec("git rev-parse origin/" + this.site.branch).then(function(result) {
-		this.site.upstreamRevision = result.trim();
+		this.site.upstreamRevision = result.stdout.trim();
 	}.bind(this));
 };
 
 LoadSiteTask.prototype._getAheadBy = function() {
 	var cmd = "git rev-list origin/" + this.site.branch + ".." + this.site.branch + " | wc -l";
 	return this.exec(cmd).then(function(result) {
-		this.site.aheadBy = parseInt(result.trim());
+		this.site.aheadBy = parseInt(result.stdout.trim());
 	}.bind(this));
 };
 
 LoadSiteTask.prototype._getBehindBy = function() {
 	var cmd = "git rev-list " + this.site.branch + "..origin/" + this.site.branch + " | wc -l";
 	return this.exec(cmd).then(function(result) {
-		this.site.behindBy = parseInt(result.trim());
+		this.site.behindBy = parseInt(result.stdout.trim());
 	}.bind(this));
 };
 

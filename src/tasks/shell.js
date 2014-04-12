@@ -22,7 +22,7 @@ ShellTask.prototype.perform = function(resolve, reject) {
 		if (error !== null) {
 			reject(error);
 		} else {
-			resolve(stdout);
+			resolve({ stdout: stdout, stderr: stderr });
 		}
 	}.bind(this));
 };

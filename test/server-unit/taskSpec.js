@@ -204,7 +204,7 @@ describe("Task", function(done) {
 		task.perform = function(resolve, reject) {
 			this.cd('/usr/bin');
 			this.exec('pwd').then(function(result) {
-				expect(result.trim()).toBe('/usr/bin');
+				expect(result.stdout.trim()).toBe('/usr/bin');
 				resolve();
 			});
 		};
