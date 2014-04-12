@@ -1,7 +1,12 @@
 var server = require('../../src/server.js');
+var resources = require('./utils/resources.js');
 
 describe("server", function() {
-	it("boots without errors", function() {
-		server.start(12345, __dirname).close();
+	it("boots without errors", function(done) {
+
+		resources.use(function(path) {
+			server.start(12345, path + '/site-collection');
+			done();
+		});
 	});
 });
