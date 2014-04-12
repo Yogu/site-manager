@@ -1,0 +1,8 @@
+<h1 class="site-title">Tasks of {{site.name}}</h1>
+
+<div ng-repeat="task in tasks" ng-class="'alert alert-'+(task.status == 'done' ? 'success' : task.status == 'failed' ? 'danger' : 'info')">
+	<a href="#/sites/{{site.name}}/tasks/{{task.id}}">
+		<span ng-class="'glyphicon glyphicon-' + (task.status == 'done' ? 'ok' : task.status == 'failed' ? 'exclamation-sign' : task.status == 'running' ? 'play' : 'time')"></span>
+		{{task.name}} ({{task.status}})
+	</a>
+</div>

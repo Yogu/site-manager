@@ -7,6 +7,8 @@ define(['angular', 'socket'], function(angular) {
 			
 			tasks: [ ],
 			
+			globalTasks: [],
+			
 			/**
 			 * Promise being fulfilled when the sites are initially loaded
 			 */
@@ -24,12 +26,49 @@ define(['angular', 'socket'], function(angular) {
 			
 			reload: function() {
 				$http.post('api/reload');
+			},
+			
+			getSite: function(name) {
+				return this.loaded.then(function() {
+					var sites = this.sites.filter(function(site) { return site.name == name; });
+					if (sites.length == 0)
+						throw new Error('There is no site called ' + name);
+					return sites[0];
+				}.bind(this));
+			},
+			
+			getTask: function(site, id) {
+				var task = findTask(id);
+				if (task)
+					return new Promise(function(resolve) { resolve(task);});
+				
+				return $http.get('api/sites/' + site.name + '/tasks/' + id)
+				.then(function(res) {
+					return res.data;
+				});
+			},
+			
+			getSiteTasks: function(site) {
+				return $http.get('api/sites/' + site.name + '/tasks')
+				.then(function(res) {
+					return res.data.tasks;
+				});
 			}
 		};
 		
 		socket.on('task:schedule', function(task) {
-			console.log(task);
+			task.log = [];
 			exports.tasks.unshift(task);
+			
+			if (task.site) {
+				exports.getSite(task.site).then(function(site) {
+					if (!site.tasks)
+						site.tasks = [];
+					site.tasks.unshift(task);
+				});
+			} else {
+				exports.globalTasks.unshift(task);
+			}
 		});
 		
 		function findTask(id) {

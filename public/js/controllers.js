@@ -22,10 +22,30 @@ define([ 'angular', 'model' ], function(angular) {
 		} ])
 		
 		.controller('SiteOverviewCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
-			model.loaded.then(function() {
-				var sites = model.sites.filter(function(site) { return site.name == $routeParams.name; });
-				if (sites.length > 0)
-					$scope.site = sites[0];
+			model.getSite($routeParams.site).then(function(site) {
+				$scope.site = site;
+			});
+		} ])
+		
+		.controller('SiteTasksCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
+			model.getSite($routeParams.site)
+			.then(function(site) {
+				$scope.site = site;
+				return model.getSiteTasks(site);
+			})
+			.then(function(tasks) {
+				$scope.tasks = tasks;
+			});
+		} ])
+		
+		.controller('TaskCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
+			model.getSite($routeParams.site)
+			.then(function(site) {
+				$scope.site = site;
+				return model.getTask(site, $routeParams.id);
+			})
+			.then(function(task) {
+				$scope.task = task;
 			});
 		} ]);
 });

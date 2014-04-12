@@ -1,0 +1,6 @@
+<h1 class="site-title">
+	<span ng-class="'glyphicon glyphicon-' + (task.status == 'done' ? 'ok' : task.status == 'failed' ? 'exclamation-sign' : task.status == 'running' ? 'play' : 'time')"></span>
+	Task {{task.id}} <span ng-if="site">of {{site.name}}</span> ({{task.status}})
+</h1>
+
+<pre>{{task.log}}</pre>

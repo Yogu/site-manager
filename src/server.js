@@ -32,6 +32,34 @@ exports.start = function(port, dir) {
 		res.send(202 /* accepted */);
 	});
 	
+	app.get('/api/sites/:site/tasks', function(req, res) {
+		controller.getSite(req.params.site)
+		.then(function(site) {
+			return site.getTasks(0, 20);
+		})
+		.then(function(tasks) {
+			res.json(objects.extract( { tasks: tasks }, {'tasks[]': '*'}));
+		})
+		.catch(function(e) {
+			console.error(e.stack);
+			res.send(500);
+		});
+	});
+	
+	app.get('/api/sites/:site/tasks/:id', function(req, res) {
+		controller.getSite(req.params.site)
+		.then(function(site) {
+			return site.getTask(req.params.id);
+		})
+		.then(function(task) {
+			res.json(objects.extract(task, '*'));
+		})
+		.catch(function(e) {
+			console.error(e.stack);
+			res.send(500);
+		});
+	});
+	
 	controller.on('task:schedule', function(task) {
 		var context = task.context;
 		task = objects.extract(task, '*');
