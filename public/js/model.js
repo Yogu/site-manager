@@ -1,6 +1,6 @@
 define(['angular', 'socket'], function(angular) {
-	angular.module('myApp.model', ['socket']).factory('model', ['$http', 'socket',
-			function($http, socket) {
+	angular.module('myApp.model', ['socket']).factory('model', ['$http', '$q', 'socket',
+			function($http, $q, socket) {
 		
 		var exports = {
 			sites: [ ],
@@ -39,8 +39,11 @@ define(['angular', 'socket'], function(angular) {
 			
 			getTask: function(site, id) {
 				var task = findTask(id);
-				if (task)
-					return new Promise(function(resolve) { resolve(task);});
+				if (task) {
+					var deferred = $q.defer();
+					deferred.resolve(task);
+					return deferred.promise;
+				}
 				
 				return $http.get('api/sites/' + site.name + '/tasks/' + id)
 				.then(function(res) {
@@ -57,7 +60,6 @@ define(['angular', 'socket'], function(angular) {
 		};
 		
 		socket.on('task:schedule', function(task) {
-			task.log = [];
 			exports.tasks.unshift(task);
 			
 			if (task.site) {
@@ -82,14 +84,13 @@ define(['angular', 'socket'], function(angular) {
 			var existing = findTask(taskID);
 			if (existing) {
 				existing.status = status;
-				console.log(existing);
 			}
 		});
 		
 		socket.on('task:log', function(taskID, message) {
 			var existing = findTask(taskID);
 			if (existing)
-				existing.log.push(message);
+				existing.log += message + "\n";
 		});
 		
 		return exports;
