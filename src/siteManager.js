@@ -33,6 +33,11 @@ SiteManager.prototype.loadTask = function() {
 				else
 					self._logRoot = path.resolve(self.path, 'log');
 				self.setTaskArchivePath(self._logRoot + '/_global');
+
+				if (config.repo)
+					self._repoPath = path.resolve(self.path, config.repo);
+				else
+					self._repoPath = path.resolve(self.path, 'repo.git');
 				
 				var newSites = [];
 				for (var name in config.sites) {
@@ -60,6 +65,47 @@ SiteManager.prototype.loadTask = function() {
 				reject(e);
 			}
 		}.bind(this));
+	});
+};
+
+SiteManager.prototype.fetchTask = function() {
+	var self = this;
+	return new Task("Fetch", function(resolve, reject) {
+		this.cd(self._repoPath);
+		this.exec('git fetch origin +refs/heads/*:refs/heads/*')
+		.then(function(result) {
+			var updatedBranches = {};
+			this.doLog(JSON.stringify(result));
+			result.stderr.split("\n").forEach(function(line) {
+				this.doLog(line);
+				var matches = line.match(/^   [^ ]+ +([^ ]+) /);
+				if (!matches)
+					return; // this is not a ref update
+				var branch = matches[1];
+				updatedBranches[branch] = true;
+			}.bind(this));
+			updatedBranches = Object.getOwnPropertyNames(updatedBranches);
+			if (!updatedBranches.length) {
+				this.doLog('No branches have been updated');
+				return;
+			}
+			this.doLog('The branches ' + updatedBranches.join(', ') + ' have been updated');
+			
+			var updatedSites = self.sites.filter(function(site) {
+				return updatedBranches.indexOf(site.branch) >= 0;
+			});
+			if (!updatedSites.length) {
+				this.doLog('No sites follow one of these branches');
+				return;
+			}
+			this.doLog('The sites ' + updatedSites.map(function(s) { return s.name; }).join(', ') +
+					' will be upgraded');
+			
+			updatedSites.forEach(function(site) {
+				site.schedule(site.upgradeTask());
+			});
+		}.bind(this))
+		.then(resolve, reject);
 	});
 };
 

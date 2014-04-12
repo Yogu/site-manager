@@ -28,6 +28,10 @@ define(['angular', 'socket'], function(angular) {
 				$http.post('api/reload');
 			},
 			
+			fetch: function() {
+				$http.post('api/fetch');
+			},
+			
 			upgrade: function(site) {
 				$http.post('api/sites/'  + site.name + '/upgrade');
 			},

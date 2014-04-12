@@ -32,6 +32,11 @@ exports.start = function(port, dir) {
 		res.send(202 /* accepted */);
 	});
 	
+	app.post('/api/fetch', function(req, res) {
+		controller.manager.schedule(controller.manager.fetchTask());
+		res.send(202 /* accepted */);
+	});
+	
 	app.post('/api/sites/:site/upgrade', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {
