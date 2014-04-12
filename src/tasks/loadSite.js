@@ -55,8 +55,8 @@ LoadSiteTask.prototype._getBehindBy = function() {
 };
 
 LoadSiteTask.prototype._getIsClean = function() {
-	// diff-files reports lots of files. that is fixed if git status is called before
-	var cmd = "git status && git diff-index --quiet --cached HEAD && git diff-files --quiet";
+	// discard the index
+	var cmd = "rm .git/index ; git reset && git diff-files --quiet";
 	return new Promise(function(resolve, reject) {
 		this.exec(cmd).then(function() {
 			this.site.isClean = true;
