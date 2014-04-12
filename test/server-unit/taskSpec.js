@@ -190,11 +190,10 @@ describe("Task", function(done) {
 			expect(parent.log).toEqual(['before',
 			                    'run: good-child',
 			                    '  good child',
-			                    'ok',
 			                    'between',
 			                    'run: bad-child',
 			                    '  bad child',
-			                    'failed: bad',
+			                    '  failed: bad',
 			                    'after', ''].join("\n"));
 			done();
 		}, function(e) { this.fail(e); }.bind(this));

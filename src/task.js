@@ -7,16 +7,18 @@ var uniqueTaskSuffix = 0;
 function Task(name, perform) {
 	// capture the callbacks to defer the actual task performance until start() is called
 	Promise.call(this, function(resolve, reject) {
-		this._resolve = function() {
+		this._resolve = function(result) {
 			this.status = 'done';
 			this._events.emit('status');
-			resolve.apply(this, arguments);
+			resolve(result);
 		}.bind(this); 
 		
-		this._reject = function() {
+		this._reject = function(err) {
+			if (err)
+				this.doLog('failed: ' + err);
 			this.status = 'failed';
 			this._events.emit('status');
-			reject.apply(this, arguments);
+			reject(err);
 		}.bind(this);
 	}.bind(this));
 	
@@ -86,13 +88,7 @@ Task.prototype.runNested = function(task) {
 	}.bind(this));
 	this.doLog('run: ' + task.name);
 	task.start();
-	return task.then(function(result) {
-		this.doLog('ok');
-		return result;
-	}.bind(this), function(e) {
-		this.doLog('failed' + (e ? ': ' + e : ''));
-		throw e;
-	}.bind(this));
+	return task;
 };
 
 Task.prototype.cd = function(path) {
