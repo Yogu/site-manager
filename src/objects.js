@@ -17,6 +17,9 @@ function extract(object, properties) {
 			case 'number':
 			case 'boolean':
 				return object;
+			case 'object':
+				if (object != null && object.constructor == Date)
+					return object;
 			default:
 				return null;
 		}

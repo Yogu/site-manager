@@ -6,6 +6,8 @@ describe('objects.extract()', function() {
 		expect(extract(1, '.')).toBe(1);
 		expect(extract(true, '.')).toBe(true);
 		expect(extract("hey", '.')).toBe("hey");
+		expect(extract(new Date(12345), '.')).toEqual(new Date(12345));
+		expect(extract(null, '.')).toBe(null);
 
 		expect(extract(1, ['.'])).toBe(1);
 		expect(extract(true, ['.'])).toBe(true);
