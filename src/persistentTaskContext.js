@@ -108,7 +108,7 @@ PersistentTaskContext.prototype.getTask = function(id) {
 	return new Promise(function(resolve, reject) {
 		fs.readFile(this._taskArchivePath + '/' + id + '.yaml', 'utf8', function(err, data) {
 			if (err)
-				reject(err);
+				return reject(err);
 			var task = yaml.safeLoad(data);
 			resolve(task);
 		}.bind(this));

@@ -1,5 +1,8 @@
 var Promise = require('es6-promise').Promise;
 var EventEmitter = require('events').EventEmitter;
+var moment = require('moment');
+
+var uniqueTaskSuffix = 0;
 
 function Task(name, perform) {
 	// capture the callbacks to defer the actual task performance until start() is called
@@ -19,7 +22,7 @@ function Task(name, perform) {
 	
 	this.status = 'ready';
 	this._events = new EventEmitter();
-	this.id = Task._nextTaskID++;
+	this.id = moment().format('YYYY-MM-DD--HH-mm-ss.SSS') + ('000' + uniqueTaskSuffix++).slice(-3);
 	this.log = '';
 	
 	// single callback argument?
