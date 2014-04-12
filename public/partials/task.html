@@ -1,6 +1,16 @@
 <h1 class="site-title">
+	<a href="#/sites">sites</a> / 
+	<a href="#/sites/{{site.name}}">{{site.name}}</a> / 
+	<a href="#/sites/{{site.name}}/tasks">tasks</a> / 
 	<span ng-class="'glyphicon glyphicon-' + (task.status == 'done' ? 'ok' : task.status == 'failed' ? 'exclamation-sign' : task.status == 'running' ? 'play' : 'time')"></span>
-	Task {{task.id}} <span ng-if="site">of {{site.name}}</span> ({{task.status}})
+	{{task.name}}
 </h1>
+
+<dl class="dl-horizontal">
+	<dt>id:</dt>
+	<dd>{{task.id}}</dd>
+	<dt>status:</dd>
+	<dd>{{task.status}}</dd>
+</dl>
 
 <pre>{{task.log}}</pre>

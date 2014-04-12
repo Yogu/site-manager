@@ -1,4 +1,8 @@
-<h1 class="site-title">Tasks of {{site.name}}</h1>
+<h1 class="site-title">
+	<a href="#/sites">sites</a> / 
+	<a href="#/sites/{{site.name}}">{{site.name}}</a> / 
+	tasks
+</h1>
 
 <div ng-repeat="task in tasks" ng-class="'alert alert-'+(task.status == 'done' ? 'success' : task.status == 'failed' ? 'danger' : 'info')">
 	<a href="#/sites/{{site.name}}/tasks/{{task.id}}">

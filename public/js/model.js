@@ -47,6 +47,8 @@ define(['angular', 'socket'], function(angular) {
 				
 				return $http.get('api/sites/' + site.name + '/tasks/' + id)
 				.then(function(res) {
+					if (!findTask(id)) // check again if it exists now
+						exports.tasks.push(res.data); // cache it
 					return res.data;
 				});
 			},
