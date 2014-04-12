@@ -10,6 +10,7 @@ function Controller(dir) {
 	
 	this.manager.on('siteAdded', function(newSite) {
 		this._initTaskContextHandlers(newSite);
+		this._initSiteHandlers(newSite);
 	}.bind(this));
 	
 	this.manager.on('load', function() {
@@ -17,7 +18,7 @@ function Controller(dir) {
 		this.manager.sites.forEach(function(site) { this._siteMap[site.name] = site; }.bind(this));
 	}.bind(this));
 	
-	this._initTaskContextHandlers(this.manager);	
+	this._initTaskContextHandlers(this.manager);
 }
 
 Controller.prototype = Object.create(EventEmitter.prototype);
@@ -33,6 +34,12 @@ Controller.prototype.getSite = function(siteName) {
 		if (siteName in this._siteMap)
 			return this._siteMap[siteName];
 		throw new Error("There is no such site");
+	}.bind(this));
+};
+
+Controller.prototype._initSiteHandlers = function(site) {
+	site.on('load', function() {
+		this.emit('site:load', site);
 	}.bind(this));
 };
 

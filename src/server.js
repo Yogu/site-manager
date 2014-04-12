@@ -87,5 +87,9 @@ exports.start = function(port, dir) {
 		io.sockets.emit('task:log', task.id, message);
 	});
 	
+	controller.on('site:load', function(site) {
+		io.sockets.emit('site:load', site.name, objects.extract(site, '*'));
+	});
+	
 	return server;
 };

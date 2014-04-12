@@ -102,6 +102,15 @@ define(['angular', 'socket'], function(angular) {
 				existing.log += message + "\n";
 		});
 		
+		socket.on('site:load', function(name, data) {
+			exports.getSite(name).then(function(site) {
+				for (propertyName in data) {
+					if (data.hasOwnProperty(propertyName))
+						site[propertyName] = data[propertyName];
+				}
+			});
+		});
+		
 		return exports;
 	}]);
 });

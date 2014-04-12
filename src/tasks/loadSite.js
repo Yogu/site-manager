@@ -25,6 +25,7 @@ LoadSiteTask.prototype.perform = function(resolve, reject) {
 		.then(function() {
 			site.canUpgrade = site.aheadBy == 0 && site.isClean && site.behindBy > 0;
 			site.isLoaded = true;
+			site.emit('load');
 		})
 		.catch(function(err) { self.site.isLoadFailed = true; throw err; })
 		.then(resolve, reject);
