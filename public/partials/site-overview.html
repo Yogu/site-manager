@@ -1,1 +1,10 @@
 <h1 class="site-title">Site {{site.name}}</h1>
+
+<dl>
+	<dt>Branch:</dt>
+	<dd>{{site.branch}}</dd>
+	<dt>Revision:</dt>
+	<dd>{{site.revision}}</dd>
+	<dt>Upgrade Status:</dt>
+	<dd>{{getUpgradeStatus(site)}}</dd>
+</dl>
