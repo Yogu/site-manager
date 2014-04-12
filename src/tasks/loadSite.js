@@ -41,14 +41,14 @@ LoadSiteTask.prototype._getRevision = function() {
 };
 
 LoadSiteTask.prototype._getAheadBy = function() {
-	var cmd = "git rev-list origin/" + this.site.branch + ".." + this.site.branch + " --count";
+	var cmd = "git rev-list origin/" + this.site.branch + ".." + this.site.branch + " | wc -l";
 	return this.exec(cmd).then(function(result) {
 		this.site.aheadBy = parseInt(result.trim());
 	}.bind(this));
 };
 
 LoadSiteTask.prototype._getBehindBy = function() {
-	var cmd = "git rev-list " + this.site.branch + "..origin/" + this.site.branch + " --count";
+	var cmd = "git rev-list " + this.site.branch + "..origin/" + this.site.branch + " | wc -l";
 	return this.exec(cmd).then(function(result) {
 		this.site.behindBy = parseInt(result.trim());
 	}.bind(this));
