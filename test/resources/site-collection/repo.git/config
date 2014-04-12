@@ -2,3 +2,9 @@
 	repositoryformatversion = 0
 	filemode = true
 	bare = true
+[remote "origin"]
+	url = ../../remote.git/
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
