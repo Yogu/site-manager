@@ -11,6 +11,20 @@
 	<dd>{{task.id}}</dd>
 	<dt>status:</dd>
 	<dd>{{task.status}}</dd>
+	<dt>scheduled:</dt>
+	<dd>{{task.scheduleTime | date:'medium'}}</dd>
+	<dt>duration:</dt>
+	<dd>
+		<span ng-if="task.startTime && task.endTime">
+			{{task.duration}} ms ( {{task.startTime | date:'mediumTime'}} to {{task.endTime | date:'mediumTime'}})
+		</span>
+		<span ng-if="task.startTime && !task.endTime">
+			running since {{task.startTime | date: 'mediumTime'}}
+		</span>
+		<span ng-if="!task.startTime && !task.endTime">
+			not yet started
+		</span>
+	</dd>
 </dl>
 
 <pre>{{task.log}}</pre>

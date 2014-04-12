@@ -92,6 +92,12 @@ define(['angular', 'socket'], function(angular) {
 		socket.on('task:status', function(taskID, status) {
 			var existing = findTask(taskID);
 			if (existing) {
+				if (!existing.startTime)
+					existing.startTime = new Date();
+				if (status != 'running' && !existing.endTime) {
+					existing.endTime = new Date();
+					existing.duration = existing.endTime.getTime() - existing.startTime.getTime();
+				}
 				existing.status = status;
 			}
 		});

@@ -151,4 +151,17 @@ describe('PersistentTaskContext', function() {
 			.then(done);
 		}.bind(this));
 	});
+	
+	it("collects time information", function(done) {
+		var context = new PersistentTaskContext();
+		var task = new Task(function(resolve) { resolve(); });
+		context.schedule(task);
+		setTimeout(function() {
+			expect(task.startTime.constructor).toBe(Date);
+			expect(task.endTime.constructor).toBe(Date);
+			expect(task.scheduleTime.constructor).toBe(Date);
+			expect(typeof task.duration).toBe('number');
+			done();
+		}, 0);
+	});
 });

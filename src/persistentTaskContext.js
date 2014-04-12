@@ -4,6 +4,7 @@ var objects = require('./objects.js');
 var fs = require('fs');
 var Promise = require('es6-promise').Promise;
 var mkdirp = require('mkdirp');
+var moment = require('moment');
 
 /**
  * A task context that archives logs of succeeded and failed tasks
@@ -19,8 +20,13 @@ function PersistentTaskContext(path) {
 	this._tasksInMemory = [];
 	
 	this.on('schedule', function(task) {
+		task.scheduleTime = new Date();
 		this._tasksInMemory.unshift(task);
 	}.bind(this));
+	
+	this.on('run', function(task) {
+		task.startTime = new Date();
+	});
 	
 	this.on('done', this._archiveTask.bind(this));
 	this.on('fail', this._archiveTask.bind(this));
@@ -41,6 +47,8 @@ PersistentTaskContext.prototype.setTaskArchivePath = function(path) {
 };
 
 PersistentTaskContext.prototype._archiveTask = function(task) {
+	task.endTime = new Date();
+	task.duration = moment(task.endTime).diff(task.startTime);
 	this._taskArchivePathSet
 		.then(function() {
 			return this._saveTask(task);
@@ -54,7 +62,7 @@ PersistentTaskContext.prototype._archiveTask = function(task) {
 PersistentTaskContext.prototype._saveTask = function(task) {
 	return new Promise(function(resolve, reject) {
 		var path = this._taskArchivePath + '/' + task.id + '.yaml';
-		var serialized = yaml.safeDump(objects.extract(task, ['id', 'name', 'status', 'log']));
+		var serialized = yaml.safeDump(objects.extract(task, '*'));
 		
 		fs.writeFile(path, serialized, function(err) {
 			if (err)
