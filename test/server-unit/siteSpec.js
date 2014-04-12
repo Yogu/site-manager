@@ -1,6 +1,6 @@
 var Site = require('../../src/site.js');
 var path = require('path');
-var resources = require('./utils/resources.js');
+var resources = require('../utils/resources.js');
 
 var resourcesPath = path.resolve(__dirname, 'resources');
 

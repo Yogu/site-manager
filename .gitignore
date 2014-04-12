@@ -32,7 +32,7 @@ node_modules
 
 # Application
 /config.yaml
-/test/server-unit/workdir/
+/test/workdir/
 
 # Bower
 public/bower_components

@@ -1,4 +1,4 @@
-require('./utils/resources.js');
+require('../utils/resources.js');
 
 jasmine.getEnv().defaultTimeoutInterval = 500;
 

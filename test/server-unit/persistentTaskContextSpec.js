@@ -1,6 +1,6 @@
 var PersistentTaskContext = require('../../src/persistentTaskContext.js');
 var Task = require('../../src/task.js');
-var resources = require('./utils/resources.js');
+var resources = require('../utils/resources.js');
 var Promise = require('es6-promise').Promise;
 
 describe('PersistentTaskContext', function() {

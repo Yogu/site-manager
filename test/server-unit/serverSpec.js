@@ -1,5 +1,5 @@
 var Server = require('../../src/server.js');
-var resources = require('./utils/resources.js');
+var resources = require('../utils/resources.js');
 
 describe("server", function() {
 	it("boots without errors", function(done) {
