@@ -28,6 +28,10 @@ define(['angular', 'socket'], function(angular) {
 				$http.post('api/reload');
 			},
 			
+			upgrade: function(site) {
+				$http.post('api/sites/'  + site.name + '/upgrade');
+			},
+			
 			getSite: function(name) {
 				return this.loaded.then(function() {
 					var sites = this.sites.filter(function(site) { return site.name == name; });
@@ -47,8 +51,11 @@ define(['angular', 'socket'], function(angular) {
 				
 				return $http.get('api/sites/' + site.name + '/tasks/' + id)
 				.then(function(res) {
-					if (!findTask(id)) // check again if it exists now
+					if (!findTask(id)) { // check again if it exists now
+						res.data.alertIsHidden = true; // should not be displayed in the alert bar
 						exports.tasks.push(res.data); // cache it
+						
+					}
 					return res.data;
 				});
 			},

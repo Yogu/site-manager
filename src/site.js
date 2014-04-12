@@ -1,6 +1,7 @@
 var PersistentTaskContext = require('./persistentTaskContext.js');
 var Task = require('./task.js');
 var LoadSiteTask = require('./tasks/loadSite.js');
+var UpgradeSiteTask = require('./tasks/upgradeSite.js');
 
 function Site(name, path) {
 	PersistentTaskContext.call(this);
@@ -21,6 +22,10 @@ Site.prototype = Object.create(PersistentTaskContext.prototype);
 
 Site.prototype.loadTask = function() {
 	return new LoadSiteTask(this);
+};
+
+Site.prototype.upgradeTask = function() {
+	return new UpgradeSiteTask(this);
 };
 
 module.exports = Site;

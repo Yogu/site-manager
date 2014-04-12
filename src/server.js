@@ -32,6 +32,18 @@ exports.start = function(port, dir) {
 		res.send(202 /* accepted */);
 	});
 	
+	app.post('/api/sites/:site/upgrade', function(req, res) {
+		controller.getSite(req.params.site)
+		.then(function(site) {
+			site.schedule(site.upgradeTask());
+			res.send(202 /* accepted */);
+		})
+		.catch(function(e) {
+			console.error(e.stack);
+			res.send(500);
+		});
+	});
+	
 	app.get('/api/sites/:site/tasks', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {

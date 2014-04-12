@@ -12,6 +12,9 @@
 		<dt>Upgrade Status:</dt>
 		<dd>{{status(site)}}</dd>
 	</dl>
+	<div ng-if="site.canUpgrade">
+		<button ng-click="upgrade()">Upgrade {{site.behindBy}} commit(s)</button>
+	</div>
 </div>
 <div ng-if="!site.isLoaded && !site.isLoadFailed">
 	<span>loading...</span>

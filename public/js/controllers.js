@@ -36,6 +36,9 @@ define([ 'angular', 'model' ], function(angular) {
 					return 'up to date';
 				return 'upgrade available (' + site.behindBy + ' commits), to ' + site.upstreamRevision;
 			};
+			$scope.upgrade = function() {
+				model.upgrade($scope.site);
+			};
 		} ])
 		
 		.controller('SiteTasksCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {

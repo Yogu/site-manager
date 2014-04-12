@@ -13,6 +13,7 @@ LoadSiteTask.prototype = Object.create(Task.prototype);
 LoadSiteTask.prototype.perform = function(resolve, reject) {
 	this.cd(this.site.path);
 	var self = this;
+	var site = self.site;
 	
 	this._fetch()
 		.then(function() { return self._getRevision(); })
@@ -21,7 +22,10 @@ LoadSiteTask.prototype.perform = function(resolve, reject) {
 		.then(function() { return self._getAheadBy(); })
 		.then(function() { return self._getBehindBy(); })
 		.then(function() { return self._getIsClean(); })
-		.then(function() { self.site.isLoaded = true; })
+		.then(function() {
+			site.canUpgrade = site.aheadBy == 0 && site.isClean && site.behindBy > 0;
+			site.isLoaded = true;
+		})
 		.catch(function(err) { self.site.isLoadFailed = true; throw err; })
 		.then(resolve, reject);
 };
