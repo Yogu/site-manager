@@ -73,7 +73,7 @@ SiteManager.prototype.fetchTask = function() {
 				return; // this is not a ref update
 			var branch = matches[1];
 			updatedBranches[branch] = true;
-		});
+		}.bind(this));
 		updatedBranches = Object.getOwnPropertyNames(updatedBranches);
 		if (!updatedBranches.length) {
 			this.doLog('No branches have been updated');
