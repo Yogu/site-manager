@@ -1,6 +1,7 @@
 var Promise = require('es6-promise').Promise;
 var EventEmitter = require('events').EventEmitter;
 var moment = require('moment');
+var Q = require('q');
 
 var uniqueTaskSuffix = 0;
 
@@ -55,10 +56,25 @@ Task.prototype.start = function() {
 	this._events.emit('status');
 	
 	try {
-		this.perform(this._resolve, this._reject);
+		this._doPerform();
 	} catch (e) {
 		this._reject(e);
 	}
+};
+
+Task.prototype._doPerform = function() {
+	// support generators
+	function* sampleGenerator(){}
+	if (this.perform.constructor == sampleGenerator.constructor) {
+		Q.async(this.perform.bind(this))().then(this._resolve, this._reject);
+		return;
+	}
+	
+	var result = this.perform(this._resolve, this._reject);
+	
+	// support returned promises
+	if ((typeof result) == 'object' && (typeof result.then) == 'function')
+		result.then(this._resolve, this._reject);
 };
 
 Task.prototype.perform = function(resolve, reject) {

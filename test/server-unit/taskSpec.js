@@ -1,4 +1,5 @@
 var Task = require('../../src/task.js');
+var Promise = require('es6-promise').Promise;
 
 describe("Task", function(done) {
 	it("has unique id", function() {
@@ -210,5 +211,58 @@ describe("Task", function(done) {
 		};
 		task.start();
 		task.then(done);
+	});
+	
+	it("supports generator syntax", function(done) {
+		var task = new Task();
+		task.perform = function*() {
+			var intermediate = yield new Promise(function(resolve) { resolve('intermediate'); } );
+			expect(intermediate).toBe('intermediate');
+			return "done";
+		};
+		task.start();
+		task.then(function(result) {
+			expect(result).toBe('done');
+			done();
+		}, function(err) { this.fail(err); done(); }.bind(this));
+	});
+	
+	it("supports errors in generator syntax", function(done) {
+		var task = new Task();
+		task.perform = function*() {
+			var intermediate = yield new Promise(function(resolve) { resolve('intermediate'); } );
+			throw new Error('the error');
+		};
+		task.start();
+		task
+		.then(function() { this.fail('then should not have been called'); }.bind(this))
+		.catch(function(err) {
+			expect(err.message).toBe('the error');
+			done();
+		});
+	});
+	
+	it("supports returned promises", function(done) {
+		var task = new Task();
+		task.perform = function() {
+			return new Promise(function(resolve) { resolve('done'); } );
+		};
+		task.start();
+		task.then(function(result) {
+			expect(result).toBe('done');
+			done();
+		}, function(err) { this.fail(err); done(); }.bind(this));
+	});
+	
+	it("supports errors with returned promises", function(done) {
+		var task = new Task();
+		task.perform = function() {
+			return new Promise(function(resolve, reject) { reject(new Error('the message')); } );
+		};
+		task.start();
+		task.catch(function(err) {
+			expect(err.message).toBe('the message');
+			done();
+		});
 	});
 });
