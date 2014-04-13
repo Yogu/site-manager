@@ -1,5 +1,6 @@
 var Task = require('../task.js');
-var exec = require('child_process').exec;
+var exec = require('child-process-promise').exec;
+var Q = require('q');
 
 function ShellTask(command, cwd) {
 	Task.call(this);
@@ -10,21 +11,19 @@ function ShellTask(command, cwd) {
 
 ShellTask.prototype = Object.create(Task.prototype);
 
-ShellTask.prototype.perform = function(resolve, reject) {
+ShellTask.prototype.perform = function*() {
 	var options = {};
 	if (this.cwd)
 		options.cwd = this.cwd;
-	exec(this.command, options, function(error, stdout, stderr) {
-		if (stdout)
-			this.doLog(stdout);
-		if (stderr)
-			this.doLog(stderr);
-		if (error !== null) {
-			reject(error);
-		} else {
-			resolve({ stdout: stdout, stderr: stderr });
-		}
-	}.bind(this));
+	
+	var result = yield exec(this.command, options);
+	
+	if (result.stdout)
+		this.doLog(result.stdout);
+	if (result.stderr)
+		this.doLog(result.stderr);
+	
+	return { stdout: result.stdout, stderr: result.stderr };
 };
 
 module.exports = ShellTask;

@@ -8,7 +8,6 @@ describe("Site", function() {
 	it("can load", function(done) {
 		resources.use(function(resourcesPath) {
 			var site = new Site("test", path.resolve(resourcesPath, 'site-collection/sites/test'));
-			site.on('fail', function(task, error) { this.fail(error); done(); }.bind(this));
 			var task = site.loadTask();
 			// task.on('log', console.log.bind(console)); // for debugging
 			site.schedule(task);
@@ -22,9 +21,10 @@ describe("Site", function() {
 				expect(site.aheadBy).toBe(0);
 				expect(site.behindBy).toBe(1);
 				expect(site.canUpgrade).toBe(true);
-				done();
-			});
-		});
+			})
+			.catch(function(err) { this.fail(err); }.bind(this))
+			.then(done);
+		}.bind(this));
 	}, 5000);
 	
 	it("can upgrade", function(done) {

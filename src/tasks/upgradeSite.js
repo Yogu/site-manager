@@ -10,26 +10,20 @@ function UpgradeSiteTask(site) {
 
 UpgradeSiteTask.prototype = Object.create(Task.prototype);
 
-UpgradeSiteTask.prototype.perform = function(resolve, reject) {
+UpgradeSiteTask.prototype.perform = function*() {
 	this.cd(this.site.path);
-	var self = this;
-	var site = self.site;
 	
 	this.doLog('Checking if site can be upgraded...');
-	this.runNested(site.loadTask())
-		.then(function() {
-			if (!site.canUpgrade)
-				throw new Error("Can not upgrade");
-		})
-		.then(function() {
-			self.doLog('Upgrade is possible. Pulling incoming commits...');
-			return self.exec('git pull');
-		})
-		.then(function() {
-			self.doLog('Upgrade completed. Updating site information');
-			return self.runNested(site.loadTask());
-		})
-		.then(resolve, reject);
+	yield this.runNested(this.site.loadTask());
+	
+	if (!this.site.canUpgrade)
+		throw new Error("Can not upgrade");
+
+	this.doLog('Upgrade is possible. Pulling incoming commits...');
+	yield this.exec('git pull');
+	
+	this.doLog('Upgrade completed. Updating site information');
+	yield this.runNested(this.site.loadTask());
 };
 
 module.exports = UpgradeSiteTask;
