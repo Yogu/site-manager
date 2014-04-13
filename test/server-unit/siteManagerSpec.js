@@ -24,4 +24,33 @@ describe("SiteManager", function() {
 			});
 		}.bind(this));
 	}, 5000);
+	
+	it("can fetch", function(done) {
+		resources.use(function(path) {
+			path += '/site-collection';
+			var manager = new SiteManager(path);
+			manager.on('fail', function(task, error) { this.fail(error); done(); }.bind(this));
+			manager.schedule(manager.loadTask());
+			
+			manager.once('load', function() {
+				var testSite = manager.sites.filter(function(s) { return s.name == 'test'; })[0];
+				testSite.once('load', function() {
+					var scheduledTasks = [];
+					testSite.on('schedule', function(task) {
+						scheduledTasks.push(task.name);
+					});
+					
+					var task = manager.fetchTask();
+					manager.schedule(task);
+					task
+					.then(function() {
+						expect(task.log).toContain('sites test will be upgraded');
+						expect(task.log).toContain('branches master have been updated');
+						expect(scheduledTasks).toEqual(['Upgrade']);
+						done();
+					});
+				});
+			});
+		}.bind(this));
+	});
 });
