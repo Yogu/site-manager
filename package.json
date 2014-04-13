@@ -5,6 +5,9 @@
 	"main": "index.js",
 	"author": "Jan Melcher <info@yogularm.de>",
 	"license": "GPLv2",
+	"engines": {
+		"node": "0.11.x"
+	},
 	"dependencies": {
 		"socket.io": "0.9.x",
 		"express": "4.0.x",
@@ -16,7 +19,10 @@
 		"rimraf": "2.2.x",
 		"ncp": "0.5.x",
 		"walk": "2.3.x",
-		"moment": "2.5.x"
+		"moment": "2.5.x",
+		"q": "1.0.x",
+		"q-io": "1.11.x",
+		"child-process-promise": "0.1.x"
 	},
 	"devDependencies": {
 		"coveralls": "2.10.x",
@@ -24,12 +30,13 @@
 		"karma": "~0.10",
 		"protractor": "0.20.x",
 		"phantomjs": "1.9.x",
-		"istanbul": "0.2.x"
+		"istanbul": "gotwarlost/istanbul#harmony"
 	},
 	"scripts": {
 		"postinstall": "bower install",
-		"server-unit-test-with-coverage": "istanbul cover -x 'test/**' jasmine-node -- --captureExceptions test/server-unit",
-		"server-unit-test": "jasmine-node --captureExceptions test/server-unit",
+		"start": "node --harmony_generators index.js",
+		"server-unit-test-with-coverage": "node --harmony_generators node_modules/istanbul/lib/cli.js cover -x 'test/**' jasmine-node -- --captureExceptions test/server-unit",
+		"server-unit-test": "node --harmony_generators node_modules/jasmine-node/bin/jasmine-node --captureExceptions test/server-unit",
 		"client-unit-test": "karma start test/karma-conf.js",
 		"end-to-end-test": "webdriver-manager update && protractor test/protractor-conf.js --browser=${BROWSER-chrome}",
 		"test": "npm run server-unit-test-with-coverage && npm run client-unit-test && npm run end-to-end-test",
