@@ -200,6 +200,46 @@ describe("Task", function(done) {
 		}, function(e) { this.fail(e); }.bind(this));
 	});
 	
+	describe('runNestedQuietly', function() {
+		it('supresses log on success', function(done) {
+			var parent = new Task('parent');
+			var child = new Task('child', function(resolve) { this.doLog('child-log'); resolve(); });
+			parent.perform = function(resolve) {
+				this.runNestedQuietly(child)
+				.then(function() {
+					this.doLog('after');
+					resolve();
+				}.bind(this));
+			};
+			parent.start();
+			
+			parent.then(function() {
+				expect(parent.log).toEqual("run: child\nafter\n");
+				done();
+			})
+			.catch(function(err) { this.fail(err); done(); }.bind(this) );
+		});
+
+		it('shows log on error', function(done) {
+			var parent = new Task('parent');
+			var child = new Task('child', function(r, reject) { this.doLog('child-log'); reject(); });
+			parent.perform = function(resolve) {
+				this.runNestedQuietly(child)
+				.catch(function() {
+					this.doLog('after');
+					resolve();
+				}.bind(this));
+			};
+			parent.start();
+			
+			parent.then(function() {
+				expect(parent.log).toEqual("run: child\n  child-log\nafter\n");
+				done();
+			})
+			.catch(function(err) { this.fail(err); done(); }.bind(this) );
+		});
+	});
+	
 	it("provides shorthand to execute shell scripts", function(done) {
 		var task = new Task();
 		task.perform = function(resolve, reject) {

@@ -107,6 +107,20 @@ Task.prototype.runNested = function(task) {
 	return task;
 };
 
+Task.prototype.runNestedQuietly = function(task) {
+	this.doLog('run: ' + task.name);
+	task.start();
+	return task.catch(function(err) {
+		// only log in case of error
+		task.log.split("\n").forEach(function(message) {
+			if (message != '')
+				this.doLog("  " + message);
+		}.bind(this));
+		// but it still failed...
+		throw err;
+	}.bind(this));
+};
+
 Task.prototype.cd = function(path) {
 	this.cwd = path;
 };
