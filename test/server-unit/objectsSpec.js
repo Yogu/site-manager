@@ -66,4 +66,10 @@ describe('objects.extract()', function() {
 		var expected = { customers: [ { name: 'John Doe' }, { name: 'Harry Smith' } ] };
 		expect(extract(source, pattern)).toEqual(expected);
 	});
+	
+	it("supports asterix and specific properties at the same time", function() {
+		expect(extract({ a: 1, deep: {b: 1, c: 2}, complex: [] },
+			{'*': true, 'deep': 'b'}))
+			.toEqual( { a: 1, deep: {b: 1 } });
+	})
 });

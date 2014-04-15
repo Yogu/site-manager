@@ -37,11 +37,14 @@ function extract(object, properties) {
 		properties = newProperties;
 	}
 	
+	var propertyNames = Object.getOwnPropertyNames(properties);
 	for (var name in properties) {
+		if (!properties.hasOwnProperty(name))
+			continue;
 		var specification = properties[name];
 		
 		if (name == '[]') {
-			if (properties.length > 1)
+			if (propertyNames.length > 1)
 				throw new Error('[] must be the single property specification');
 			
 			if (object instanceof Array) {
@@ -49,7 +52,7 @@ function extract(object, properties) {
 			} else
 				return null;
 		} else if (name == '.') {
-			if (properties.length > 1)
+			if (propertyNames.length > 1)
 				throw new Error('. must be the single property specification');
 			
 			return extract(object, specification);
