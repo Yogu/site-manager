@@ -1,9 +1,17 @@
 ---
+# all these paths are relative to this config file
 siteRoot: sites
 logRoot: logs
-repo: repo.git
+repo: repo.git # path to bare repository that is used as a proxy
+
+# data base defaults (prototype for site db option)
+db:
+  type: sqlite
+
+# List the sites
 sites:
   test:
+    db:
+      path: ../db/test.sqlite # only for sqlite, relative to this file
   dev:
-    root: ../dev-site
-
+    root: ../dev-site # optional, specifies path to repo relative to siteRoot

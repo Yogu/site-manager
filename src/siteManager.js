@@ -4,6 +4,7 @@ var Site = require('./site.js');
 var yaml = require('js-yaml');
 var path = require('path');
 var fs = require('q-io/fs');
+var extend = require('node.extend');
 
 function SiteManager(path) {
 	PersistentTaskContext.call(this);
@@ -35,6 +36,11 @@ SiteManager.prototype.loadTask = function() {
 			self._repoPath = path.resolve(self.path, config.repo);
 		else
 			self._repoPath = path.resolve(self.path, 'repo.git');
+		
+		if (config.db)
+			var baseDBConfig = config.db;
+		else
+			baseDBConfig = {};
 			
 		var newSites = [];
 		for (var name in config.sites) {
@@ -50,6 +56,13 @@ SiteManager.prototype.loadTask = function() {
 				site = new Site(name, sitePath);
 				self.emit('siteAdded', site);
 			}
+			
+			if (siteConfig.db)
+				site.dbConfig = extend(siteConfig.db, baseDBConfig);
+			else
+				site.dbConfig = baseDBConfig;
+			if (site.dbConfig.path)
+				site.dbConfig.path = path.resolve(self.path, site.dbConfig.path);
 			
 			site.schedule(site.loadTask());
 			newSites.push(site);

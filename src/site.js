@@ -2,6 +2,7 @@ var PersistentTaskContext = require('./persistentTaskContext.js');
 var Task = require('./task.js');
 var LoadSiteTask = require('./tasks/loadSite.js');
 var UpgradeSiteTask = require('./tasks/upgradeSite.js');
+var databases = require('./databases');
 
 function Site(name, path) {
 	PersistentTaskContext.call(this);
@@ -16,6 +17,7 @@ function Site(name, path) {
 	this.remoteRevision = null;
 	this.isLoaded = false;
 	this.isLoadFailed = false;
+	this.dbConfig = { };
 }
 
 Site.prototype = Object.create(PersistentTaskContext.prototype);
@@ -26,6 +28,10 @@ Site.prototype.loadTask = function() {
 
 Site.prototype.upgradeTask = function() {
 	return new UpgradeSiteTask(this);
+};
+
+Site.prototype.getDB = function() {
+	return databases.connect(this.dbConfig);
 };
 
 module.exports = Site;
