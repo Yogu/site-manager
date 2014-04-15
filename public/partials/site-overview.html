@@ -11,6 +11,13 @@
 		<dd>{{site.revision}}</dd>
 		<dt>Upgrade Status:</dt>
 		<dd>{{status(site)}}</dd>
+		<dt>Data Base:</dt>
+		<dd ng-switch on="site.dbConfig.type">
+			<div ng-switch-when="">no data base</div>
+			<div ng-switch-when="sqlite">SQLite at {{site.dbConfig.path}}</div>
+			<div ng-switch-when="mysql">MySQL (db: <strong>{{site.dbConfig.database}}</strong>,
+			 host: {{site.dbConfig.host}}, user: {{site.dbConfig.user}})</div>
+		</dd>
 	</dl>
 	<div ng-if="site.canUpgrade">
 		<button ng-click="upgrade()">Upgrade {{site.behindBy}} commit(s)</button>
