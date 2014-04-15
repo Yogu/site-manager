@@ -2,6 +2,8 @@ require('../utils/resources.js');
 
 jasmine.getEnv().defaultTimeoutInterval = 500;
 
+require('q').longStackSupport = true;
+
 beforeEach(function() {
 	this.addMatchers({
 		toBeInstanceOf : function(expectedInstance) {
