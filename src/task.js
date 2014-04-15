@@ -15,8 +15,12 @@ function Task(name, perform) {
 		}.bind(this); 
 		
 		this._reject = function(err) {
-			if (err)
-				this.doLog('failed: ' + err);
+			if (err) {
+				if (typeof err == 'object' && err.stack)
+					this.doLog('failed: ' + err.stack);
+				else
+					this.doLog('failed: ' + err);
+			}
 			this.status = 'failed';
 			this._events.emit('status');
 			reject(err);
@@ -90,6 +94,9 @@ Task.prototype.once = function() {
 };
 
 Task.prototype.doLog = function(message) {
+	if (typeof message != 'string')
+		message = JSON.stringify(message);
+	
 	message.split('\n').forEach(function(line) {
 		if (line == '')
 			return;

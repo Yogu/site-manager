@@ -124,7 +124,7 @@ describe('PersistentTaskContext', function() {
 
 				expect(tasks[1].id).toBe(task1.id);
 				expect(tasks[1].name).toBe(task1.name);
-				expect(tasks[1].log).toBe("good\n");
+				expect(tasks[1].log).toBe("good\nDone.\n");
 				expect(tasks[1].status).toBe("done");
 				
 				context.schedule(task3);

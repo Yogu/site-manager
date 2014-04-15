@@ -28,7 +28,10 @@ function PersistentTaskContext(path) {
 		task.startTime = new Date();
 	});
 	
-	this.on('done', function(task) { this._archiveTask(task).done(); }.bind(this));
+	this.on('done', function(task) {
+		task.doLog('Done.');
+		this._archiveTask(task).done(); 
+	}.bind(this));
 	this.on('fail', function(task) { this._archiveTask(task).done(); }.bind(this));
 }
 
