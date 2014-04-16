@@ -5,6 +5,8 @@ var fs = require('q-io/fs');
 var mkdirp = require('mkdirp');
 var moment = require('moment');
 var Q = require('q');
+var strings = require('./strings');
+require('colors');
 
 /**
  * A task context that archives logs of succeeded and failed tasks
@@ -29,7 +31,7 @@ function PersistentTaskContext(path) {
 	});
 	
 	this.on('done', function(task) {
-		task.doLog('Done.');
+		task.doLog('Done.'.green.bold);
 		this._archiveTask(task).done(); 
 	}.bind(this));
 	this.on('fail', function(task) { this._archiveTask(task).done(); }.bind(this));
@@ -104,7 +106,9 @@ PersistentTaskContext.prototype.getTask = Q.async(function*(id) {
 	}
 	
 	var data = yield fs.read(this._taskArchivePath + '/' + id + '.yaml');
-	return yaml.safeLoad(data);
+	var task = yaml.safeLoad(data);
+	task.plainLog = strings.stripColors(task.log);
+	return task;
 });
 
 PersistentTaskContext.prototype.count = Q.async(function*() {

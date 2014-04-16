@@ -88,7 +88,7 @@ describe('PersistentTaskContext', function() {
 					expect(tasks.length).toBe(1);
 					expect(tasks[0]).toBe(task2);
 				})
-				.catch(function(err) { console.log(err); this.fail(err); }.bind(this))
+				.catch(function(err) { this.fail(err); }.bind(this))
 				.then(done);
 		}.bind(this));
 	});
@@ -119,12 +119,12 @@ describe('PersistentTaskContext', function() {
 				// newest first
 				expect(tasks[0].id).toBe(task2.id);
 				expect(tasks[0].name).toBe(task2.name);
-				expect(tasks[0].log).toBe("bad\n");
+				expect(tasks[0].plainLog).toBe("bad\n");
 				expect(tasks[0].status).toBe("failed");
 
 				expect(tasks[1].id).toBe(task1.id);
 				expect(tasks[1].name).toBe(task1.name);
-				expect(tasks[1].log).toBe("good\nDone.\n");
+				expect(tasks[1].plainLog).toBe("good\nDone.\n");
 				expect(tasks[1].status).toBe("done");
 				
 				context.schedule(task3);

@@ -2,6 +2,8 @@ var Promise = require('es6-promise').Promise;
 var EventEmitter = require('events').EventEmitter;
 var moment = require('moment');
 var Q = require('q');
+var strings = require('./strings.js');
+require('colors');
 
 var uniqueTaskSuffix = 0;
 
@@ -16,10 +18,10 @@ function Task(name, perform) {
 		
 		this._reject = function(err) {
 			if (err) {
+				var displayError = err;
 				if (typeof err == 'object' && err.stack)
-					this.doLog('failed: ' + err.stack);
-				else
-					this.doLog('failed: ' + err);
+					displayError = err.stack;
+				this.doLog('failed: '.red.bold + displayError.red);
 			}
 			this.status = 'failed';
 			this._events.emit('status');
@@ -109,13 +111,13 @@ Task.prototype.runNested = function(task) {
 	task.on('log', function(message) {
 		this.doLog('  ' + message);
 	}.bind(this));
-	this.doLog('run: ' + task.name);
+	this.doLog('run: '.bold.blue + task.name.blue);
 	task.start();
 	return task;
 };
 
 Task.prototype.runNestedQuietly = function(task) {
-	this.doLog('run: ' + task.name);
+	this.doLog('run: '.bold.blue + task.name.blue);
 	task.start();
 	return task.catch(function(err) {
 		// only log in case of error
@@ -137,5 +139,9 @@ Task.prototype.exec = function(shellCommand, cwd) {
 	var task = new ShellTask(shellCommand, cwd || this.cwd);
 	return this.runNested(task);
 };
+
+Object.defineProperty(Task.prototype, 'plainLog', {
+	get: function() { return strings.stripColors(this.log); }
+});
 
 module.exports = Task;

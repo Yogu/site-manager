@@ -44,8 +44,8 @@ describe("SiteManager", function() {
 					manager.schedule(task);
 					task
 					.then(function() {
-						expect(task.log).toContain('sites test will be upgraded');
-						expect(task.log).toContain('branches master have been updated');
+						expect(task.plainLog).toContain('sites test will be upgraded');
+						expect(task.plainLog).toContain('branches master have been updated');
 						expect(scheduledTasks).toEqual(['Upgrade']);
 						done();
 					});

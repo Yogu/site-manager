@@ -13,9 +13,11 @@
     "angular-route": "1.2.x",
     "angular-mocks": "~1.2.15",
     "angular-filters": "1.1.x",
+    "angular-sanitize": "1.2.x",
     "bootstrap": "3.1.x",
     "requirejs": "2.1.x",
-    "es6-promise": "0.1.x"
+    "es6-promise": "0.1.x",
+    "ansi2html": "agnoster/ansi2html"
   },
   "resolutions": {
     "angular": "1.2.16"

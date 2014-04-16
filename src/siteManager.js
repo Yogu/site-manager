@@ -80,7 +80,6 @@ SiteManager.prototype.fetchTask = function() {
 		var result = yield this.exec('git fetch origin +refs/heads/*:refs/heads/*');
 		var updatedBranches = {};
 		result.stderr.split("\n").forEach(function(line) {
-			this.doLog(line);
 			var matches = line.match(/^   [^ ]+ +([^ ]+) /);
 			if (!matches)
 				return; // this is not a ref update

@@ -152,7 +152,7 @@ describe("Task", function(done) {
 		
 		task.start();
 		task.then(function() {
-			expect(task.log).toBe("first\nsecond\n");
+			expect(task.plainLog).toBe("first\nsecond\n");
 			done();
 		});
 	});
@@ -188,7 +188,7 @@ describe("Task", function(done) {
 		
 		parent.start();
 		parent.then(function() {
-			expect(parent.log).toEqual(['before',
+			expect(parent.plainLog).toEqual(['before',
 			                    'run: good-child',
 			                    '  good child',
 			                    'between',
@@ -214,7 +214,7 @@ describe("Task", function(done) {
 			parent.start();
 			
 			parent.then(function() {
-				expect(parent.log).toEqual("run: child\nafter\n");
+				expect(parent.plainLog).toEqual("run: child\nafter\n");
 				done();
 			})
 			.catch(function(err) { this.fail(err); done(); }.bind(this) );
@@ -233,7 +233,7 @@ describe("Task", function(done) {
 			parent.start();
 			
 			parent.then(function() {
-				expect(parent.log).toEqual("run: child\n  child-log\nafter\n");
+				expect(parent.plainLog).toEqual("run: child\n  child-log\nafter\n");
 				done();
 			})
 			.catch(function(err) { this.fail(err); done(); }.bind(this) );

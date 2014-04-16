@@ -24,7 +24,8 @@
 		"q-io": "1.11.x",
 		"child-process-promise": "0.1.x",
 		"node-sqlite-purejs": "0.0.x",
-		"node.extend": "1.0.x"
+		"node.extend": "1.0.x",
+		"colors": "*"
 	},
 	"devDependencies": {
 		"coveralls": "2.10.x",
