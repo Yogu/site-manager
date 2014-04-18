@@ -3,6 +3,7 @@ var Task = require('./task.js');
 var LoadSiteTask = require('./tasks/loadSite.js');
 var UpgradeSiteTask = require('./tasks/upgradeSite.js');
 var databases = require('./databases');
+var Q = require('q');
 
 function Site(name, path) {
 	PersistentTaskContext.call(this);
@@ -16,6 +17,8 @@ function Site(name, path) {
 	this.branch = null;
 	this.remoteRevision = null;
 	this.isLoaded = false;
+	this._loadedDeferred = Q.defer();
+	this.loaded = this._loadedDeferred.promise;
 	this.isLoadFailed = false;
 	this.dbConfig = { };
 }

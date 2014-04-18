@@ -5,9 +5,10 @@ var path = require('path');
 var fs = require('q-io/fs');
 var extend = require('node.extend');
 
-function LoadSiteManagerTask(siteManager) {
+function LoadSiteManagerTask(siteManager, loadSites) {
 	Task.call(this);
 	this.siteManager = siteManager;
+	this.loadSites = loadSites;
 	this.name = 'Load';
 }
 
@@ -39,10 +40,12 @@ LoadSiteManagerTask.prototype.perform = function*() {
 		var baseDBConfig = config.db;
 	else
 		baseDBConfig = {};
+	
+	var sites = yaml.safeLoad(yield fs.read(manager.path + '/sites.yaml'));
 		
 	var newSites = [];
-	for (var name in config.sites) {
-		var siteConfig = config.sites[name] || {};
+	for (var name in sites) {
+		var siteConfig = sites[name] || {};
 		var sitePath = path.resolve(manager._siteRoot, siteConfig.root ? siteConfig.root : name);
 			
 		var existingSites = manager.sites.filter( function(s) { return s.name == name; } );
@@ -62,7 +65,8 @@ LoadSiteManagerTask.prototype.perform = function*() {
 		if (site.dbConfig.path)
 			site.dbConfig.path = path.resolve(manager.path, site.dbConfig.path);
 		
-		site.schedule(site.loadTask());
+		if (this.loadSites || existingSites.length == 0 /* always load new sites */)
+			site.schedule(site.loadTask());
 		newSites.push(site);
 		site.setTaskArchivePath(manager._logRoot + '/' + site.name);
 	}

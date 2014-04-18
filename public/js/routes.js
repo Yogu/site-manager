@@ -4,6 +4,10 @@ define(['angular', 'app'], function(angular, app) {
 			templateUrl : 'partials/index.html',
 			controller : 'SiteListCtrl'
 		})
+		.when('/sites/add', {
+			templateUrl : 'partials/add-site.html',
+			controller : 'AddSiteCtrl'
+		})
 		.when('/sites/:site', {
 			templateUrl : 'partials/site-overview.html',
 			controller : 'SiteOverviewCtrl'

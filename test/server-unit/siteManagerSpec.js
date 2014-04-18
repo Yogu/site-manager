@@ -53,4 +53,25 @@ describe("SiteManager", function() {
 			});
 		}.bind(this));
 	});
+	
+	it("can add new site", function(done) {
+		resources.use(function(path) {
+			path += '/site-collection';
+			var manager = new SiteManager(path);
+			manager.on('fail', function(task, error) { this.fail(error); done(); }.bind(this));
+			manager.schedule(manager.loadTask());
+			
+			manager.once('load', function() {
+				var task = manager.addSiteTask('new-site', 'master');
+				manager.schedule(task);
+				task.then(function() {
+					var sites = manager.sites.filter(function(s) { return s.name == 'new-site'});
+					expect(sites.length).toBeGreaterThan(0);
+					return sites[0].loaded;
+				})
+				.catch(function(err) { this.fail(err); }.bind(this))
+				.then(done);
+			}.bind(this));
+		}.bind(this));
+	});
 });

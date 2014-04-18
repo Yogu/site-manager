@@ -16,6 +16,7 @@ function Controller(dir) {
 	this.manager.on('load', function() {
 		this._siteMap = {};
 		this.manager.sites.forEach(function(site) { this._siteMap[site.name] = site; }.bind(this));
+		this.emit('manager:load', this.manager.sites);
 	}.bind(this));
 	
 	this._initTaskContextHandlers(this.manager);

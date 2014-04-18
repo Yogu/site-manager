@@ -20,6 +20,19 @@ define([ 'angular', 'model' ], function(angular) {
 			$scope.fetch = model.fetch.bind(model);
 		} ])
 		
+		.controller('AddSiteCtrl', [ '$scope', '$location', 'model', function($scope, $location, model) {
+			$scope.addSite = function() {
+				model.addSite($scope.siteName, $scope.branch)
+				.then(function(taskID) {
+					// show the task that is creating the new site
+					$location.path('/tasks/' + taskID);
+				})
+				.catch(function(err) {
+					alert(JSON.stringify(err));
+				});
+			};
+		} ])
+		
 		.controller('SiteOverviewCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
 			model.getSite($routeParams.site).then(function(site) {
 				$scope.site = site;

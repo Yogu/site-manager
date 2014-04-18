@@ -1,6 +1,10 @@
 define(['angular', 'socket'], function(angular) {
 	angular.module('myApp.model', ['socket']).factory('model', ['$http', '$q', 'socket',
 			function($http, $q, socket) {
+		/**
+		 * Promise being fulfulled when there is no reload in progress
+		 */
+		var reloaded = load();
 		
 		var exports = {
 			sites: [ ],
@@ -12,17 +16,7 @@ define(['angular', 'socket'], function(angular) {
 			/**
 			 * Promise being fulfilled when the sites are initially loaded
 			 */
-			loaded: $http.get('api/sites').success(function(data) {
-				// do not break existing references
-				var existingSites = {};
-				exports.sites.forEach(function(site) { existingSites[site.name] = site; });
-				exports.sites.length = 0;
-				data.sites.forEach(function(newSite) { 
-					if (newSite.name in existingSites)
-						newSite = angular.extend(existingSites[newSite.name], newSite);
-					exports.sites.push(newSite);
-				});
-			}),
+			loaded: reloaded,
 			
 			reload: function() {
 				$http.post('api/reload');
@@ -32,12 +26,20 @@ define(['angular', 'socket'], function(angular) {
 				$http.post('api/fetch');
 			},
 			
+			addSite: function(siteName, branch) {
+				return $http.post('api/sites', {siteName: siteName, branch: branch})
+				.then(function(res) {
+					return res.data.taskID;
+				});
+			},
+			
 			upgrade: function(site) {
 				$http.post('api/sites/'  + site.name + '/upgrade');
 			},
 			
 			getSite: function(name) {
-				return this.loaded.then(function() {
+				// if there is a reload in progress, wait until that finished as it may add a new site
+				return reloaded.then(function() {
 					var sites = this.sites.filter(function(site) { return site.name == name; });
 					if (sites.length == 0)
 						throw new Error('There is no site called ' + name);
@@ -130,6 +132,32 @@ define(['angular', 'socket'], function(angular) {
 				}
 			});
 		});
+		
+		socket.on('site:load', function(name, data) {
+			exports.getSite(name).then(function(site) {
+				for (propertyName in data) {
+					if (data.hasOwnProperty(propertyName))
+						site[propertyName] = data[propertyName];
+				}
+			});
+		});
+		
+		socket.on('manager:load', load);
+		
+		function load() {
+			reloaded = $http.get('api/sites').success(function(data) {
+				// do not break existing references
+				var existingSites = {};
+				exports.sites.forEach(function(site) { existingSites[site.name] = site; });
+				exports.sites.length = 0;
+				data.sites.forEach(function(newSite) { 
+					if (newSite.name in existingSites)
+						newSite = angular.extend(existingSites[newSite.name], newSite);
+					exports.sites.push(newSite);
+				});
+			});
+			return reloaded;
+		}
 		
 		return exports;
 	}]);

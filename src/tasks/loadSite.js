@@ -27,6 +27,7 @@ LoadSiteTask.prototype.perform = function*() {
 		this.site.canUpgrade = this.site.aheadBy == 0 && this.site.isClean && this.site.behindBy > 0;
 		this.site.isLoaded = true;
 		this.site.emit('load');
+		this.site._loadedDeferred.resolve();
 	} catch (err) {
 		this.site.isLoadFailed = true;
 		throw err;

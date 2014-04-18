@@ -3,12 +3,22 @@ var express = require("express");
 var socketio = require('socket.io');
 var Controller = require('./controller.js');
 var objects = require('./objects.js');
+var expressValidator = require('express-validator');
+var bodyParser = require('body-parser');
+
+expressValidator.validator.extend('isIdentifier', function (str) {
+	if (typeof str != 'string')
+		return false;
+    return str.match(/[a-zA-Z0-9_\-\.]+/) !== null;
+});
 
 exports.start = function(port, dir) {
 	var app = express();
 	var server = http.createServer(app);
 	app.use(express.static(__dirname+'/../public'));
 	app.use(require('express-promise')());
+	app.use(expressValidator());
+	app.use(bodyParser.json());
 	var io = socketio.listen(server);
 	io.set('log level', 2 /* do not log debug messages */);
 	
@@ -25,6 +35,18 @@ exports.start = function(port, dir) {
 			console.error(e.stack);
 			res.send(500);
 		});
+	});
+	
+	app.post('/api/sites', function(req, res) {
+		req.checkBody('siteName').isIdentifier();
+		req.checkBody('branch').isIdentifier();
+		var errors = req.validationErrors();
+		if (errors)
+			return res.send('Validation errors: ' + JSON.stringify(errors), 400);
+		
+		var task = controller.manager.addSiteTask(req.body.siteName, req.body.branch);
+		controller.manager.schedule(task);
+		res.json({taskID: task.id});
 	});
 	
 	app.post('/api/reload', function(req, res) {
@@ -116,6 +138,10 @@ exports.start = function(port, dir) {
 	
 	controller.on('site:load', function(site) {
 		io.sockets.emit('site:load', site.name, objects.extract(site, '*'));
+	});
+	
+	controller.on('manager:load', function(sites) {
+		io.sockets.emit('manager:load');
 	});
 	
 	return server;
