@@ -80,7 +80,8 @@ InitDataDirectoryTask.prototype.perform = function*() {
 	this.doLog('data does not exist or is not a git repository, initializing it...'.yellow.bold);
 	yield this.exec('git init data');
 	this.cd(dataPath);
-	yield this.exec('git checkout -b ' + ShellTask.escape(site.name));
+	// switch to the correct branch, but leave that branch empty (do not derive from master)
+	yield this.exec('git symbolic-ref HEAD refs/heads/' + ShellTask.escape(site.name));
 	// symlink, many things, similar to git-new-workdir, but so that it works with a bare
 	// root repo
 	var symlinks = [ 'logs/refs/', 'objects/', 'packed-refs', 'refs/' ];
