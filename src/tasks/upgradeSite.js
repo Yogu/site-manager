@@ -12,6 +12,7 @@ function UpgradeSiteTask(site) {
 UpgradeSiteTask.prototype = Object.create(Task.prototype);
 
 UpgradeSiteTask.prototype.perform = function*() {
+	var site = this.site;
 	this.cd(this.site.path);
 	
 	this.doLog('Checking if site can be upgraded...');
@@ -20,13 +21,34 @@ UpgradeSiteTask.prototype.perform = function*() {
 	if (!this.site.canUpgrade)
 		throw new Error("Can not upgrade");
 
-	this.doLog('Upgrade is possible. Pulling incoming commits...');
-	yield this.exec('git pull');
+	this.doLog('Upgrade is possible. Backing up...');
+	var backupRevision = yield this.runNested(site.backupTask(
+			'pre-upgrade ' + site.revision + '..' + site.upstreamRevision));
 	
-	this.doLog('Upgrade completed. Updating site information');
-	yield this.runNestedQuietly(this.site.loadTask());
-	
-	yield this.runNested(new MigrateTask(this.site));
+	try {
+		this.doLog('Pulling incoming commits...');
+		yield this.exec('git pull --ff-only');
+		
+		this.doLog('Pull completed');
+		yield this.runNestedQuietly(site.loadTask());
+		
+		yield this.runNested(new MigrateTask(site));
+		
+		this.doLog('Upgrade succeeded'.green);
+	} catch(err) {
+		this.doLog('Upgrade failed. Restoring backup...'.red);
+		try {
+			yield this.runNested(site.restoreTask(backupRevision));
+		} catch (restoreErr) {
+			this.doLog('Restore failed! The site is now in an inconsistent state.'.bold.red);
+			this.doLog('Restore error:');
+			if (typeof restoreErr == 'object' && restoreErr.stack)
+				restoreErr = restoreErr.stack;
+			this.doLog(restoreErr);
+			this.doLog('The upgrade error follows:');
+		}
+		throw err;
+	}
 };
 
 module.exports = UpgradeSiteTask;
