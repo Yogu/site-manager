@@ -26,4 +26,14 @@ ShellTask.prototype.perform = function*() {
 	return { stdout: result.stdout, stderr: result.stderr };
 };
 
+ShellTask.escape = function(cmd) {
+	return '"'+cmd.replace(/(["'$`\\])/g,'\\$1')+'"';
+};
+
+ShellTask.exec = function(cmd, cwd) {
+	var task = new ShellTask(cmd, cwd);
+	task.start();
+	return task;
+};
+
 module.exports = ShellTask;

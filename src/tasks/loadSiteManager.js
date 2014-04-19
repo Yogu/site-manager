@@ -35,6 +35,11 @@ LoadSiteManagerTask.prototype.perform = function*() {
 		manager._repoPath = path.resolve(manager.path, config.repo);
 	else
 		manager._repoPath = path.resolve(manager.path, 'repo.git');
+
+	if (config.backupRepo)
+		manager.backupRepoPath = path.resolve(manager.path, config.backupRepo);
+	else
+		manager.backupRepoPath = path.resolve(manager.path, 'backups.git');
 	
 	if (config.db)
 		var baseDBConfig = config.db;
@@ -55,6 +60,7 @@ LoadSiteManagerTask.prototype.perform = function*() {
 			site.path = sitePath;
 		} else {
 			site = new Site(name, sitePath);
+			site.siteManager = manager;
 			manager.emit('siteAdded', site);
 		}
 		
