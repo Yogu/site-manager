@@ -20,7 +20,7 @@
 		"ncp": "0.5.x",
 		"walk": "2.3.x",
 		"moment": "2.5.x",
-		"q": "1.0.x",
+		"q": "Yogu/q#async-unwraps-returned-promises",
 		"q-io": "1.11.x",
 		"child-process-promise": "0.1.x",
 		"node-sqlite-purejs": "0.0.x",
