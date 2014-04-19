@@ -3,15 +3,8 @@
 siteRoot: sites
 logRoot: logs
 repo: repo.git # path to bare repository that is used as a proxy
+backupRepo: backups.git # path to a bare repository that stores all the backups
 
 # data base defaults (prototype for site db option)
 db:
   type: sqlite
-
-# List the sites
-sites:
-  test:
-    db:
-      path: ../db/test.sqlite # only for sqlite, relative to this file
-  dev:
-    root: ../dev-site # optional, specifies path to repo relative to siteRoot
