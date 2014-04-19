@@ -53,6 +53,23 @@ define([ 'angular', 'model' ], function(angular) {
 			};
 		} ])
 		
+		.controller('SiteBackupsCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
+			model.getSite($routeParams.site)
+			.then(function(site) {
+				$scope.site = site;
+				
+				$scope.createBackup = function() {
+					var message = $scope.backupMessage;
+					model.backup($scope.site, message);
+				};
+				
+				return model.getBackups(site);
+			})
+			.then(function(backups) {
+				$scope.backups = backups;
+			});
+		} ])
+		
 		.controller('SiteTasksCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
 			model.getSite($routeParams.site)
 			.then(function(site) {

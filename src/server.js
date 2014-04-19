@@ -6,6 +6,8 @@ var objects = require('./objects.js');
 var expressValidator = require('express-validator');
 var bodyParser = require('body-parser');
 
+require('q').longStackSupport = true;
+
 expressValidator.validator.extend('isIdentifier', function (str) {
 	if (typeof str != 'string')
 		return false;
@@ -64,6 +66,34 @@ exports.start = function(port, dir) {
 		.then(function(site) {
 			site.schedule(site.upgradeTask());
 			res.send(202 /* accepted */);
+		})
+		.catch(function(e) {
+			console.error(e.stack);
+			res.send(500);
+		});
+	});
+	
+	app.post('/api/sites/:site/backups', function(req, res) {
+		controller.getSite(req.params.site)
+		.then(function(site) {
+			var message = String(req.body.message || '').trim();
+			message = message ? 'manual: ' + message : 'manual';
+			site.schedule(site.backupTask(message));
+			res.send(202 /* accepted */);
+		})
+		.catch(function(e) {
+			console.error(e.stack);
+			res.send(500);
+		});
+	});
+	
+	app.get('/api/sites/:site/backups', function(req, res) {
+		controller.getSite(req.params.site)
+		.then(function(site) {
+			return site.getBackups();
+		})
+		.then(function(backups) {
+			res.json(objects.extract( { backups: backups }, {'backups[]': '*'}));
 		})
 		.catch(function(e) {
 			console.error(e.stack);
@@ -138,6 +168,10 @@ exports.start = function(port, dir) {
 	
 	controller.on('site:load', function(site) {
 		io.sockets.emit('site:load', site.name, objects.extract(site, '*'));
+	});
+	
+	controller.on('site:backups', function(site) {
+		io.sockets.emit('site:backups', site.name);
 	});
 	
 	controller.on('manager:load', function(sites) {

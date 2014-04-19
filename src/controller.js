@@ -42,6 +42,14 @@ Controller.prototype._initSiteHandlers = function(site) {
 	site.on('load', function() {
 		this.emit('site:load', site);
 	}.bind(this));
+	
+	site.on('backup', function() {
+		this.emit('site:backups', site);
+	}.bind(this));
+	
+	site.on('restore', function() {
+		this.emit('site:backups', site);
+	}.bind(this));
 };
 
 Controller.prototype._initTaskContextHandlers = function(taskContext) {

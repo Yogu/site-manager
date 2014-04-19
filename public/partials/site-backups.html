@@ -1,0 +1,20 @@
+<h1>
+	<a href="#/sites">sites</a> / 
+	<a href="#/sites/{{site.name}}">{{site.name}}</a> / 
+	backups
+</h1>
+
+<input type="text" ng-model="backupMessage" placeholder="backup message">
+<button class="btn btn-default" ng-click="createBackup()">Create Backup</button>
+
+<pre style="white-space: nowrap;">
+	<div ng-repeat="backup in backups" ng-switch on="backup.type">
+		<div ng-switch-when="backup">
+			<span style="white-space: pre;">{{backup.prefix}}</span>
+			<a href="#/sites/{{site.name}}/backups/{{backup.revision}}">{{backup.revision | limitTo:10}}</a>
+			{{backup.message}}
+			({{backup.time | date:'medium'}})
+		</div>
+		<div style="white-space: pre;" ng-switch-when="guide">{{backup.prefix}}</div>
+	</div>
+</pre>

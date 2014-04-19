@@ -18,6 +18,9 @@
 			<div ng-switch-when="mysql">MySQL (db: <strong>{{site.dbConfig.database}}</strong>,
 			 host: {{site.dbConfig.host}}, user: {{site.dbConfig.user}})</div>
 		</dd>
+		<dt>Links:</dt>
+		<dd><a href="#/sites/{{site.name}}/tasks">tasks</a></dd>
+		<dd><a href="#/sites/{{site.name}}/backups">backups</a></dd>
 	</dl>
 	<div ng-if="site.canUpgrade">
 		<button ng-click="upgrade()">Upgrade {{site.behindBy}} commit(s)</button>

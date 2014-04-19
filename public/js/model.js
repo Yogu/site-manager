@@ -37,6 +37,10 @@ define(['angular', 'socket'], function(angular) {
 				$http.post('api/sites/'  + site.name + '/upgrade');
 			},
 			
+			backup: function(site, message) {
+				$http.post('api/sites/'  + site.name + '/backups', { message: message });
+			},
+			
 			getSite: function(name) {
 				// if there is a reload in progress, wait until that finished as it may add a new site
 				return reloaded.then(function() {
@@ -72,6 +76,13 @@ define(['angular', 'socket'], function(angular) {
 				return $http.get('api/sites/' + site.name + '/tasks')
 				.then(function(res) {
 					return res.data.tasks;
+				});
+			},
+			
+			getBackups: function(site) {
+				return $http.get('api/sites/' + site.name + '/backups')
+				.then(function(res) {
+					return res.data.backups;
 				});
 			},
 			
@@ -122,15 +133,6 @@ define(['angular', 'socket'], function(angular) {
 			var existing = findTask(taskID);
 			if (existing)
 				existing.log += message + "\n";
-		});
-		
-		socket.on('site:load', function(name, data) {
-			exports.getSite(name).then(function(site) {
-				for (propertyName in data) {
-					if (data.hasOwnProperty(propertyName))
-						site[propertyName] = data[propertyName];
-				}
-			});
 		});
 		
 		socket.on('site:load', function(name, data) {

@@ -16,6 +16,10 @@ define(['angular', 'app'], function(angular, app) {
 			templateUrl : 'partials/site-tasks.html',
 			controller : 'SiteTasksCtrl'
 		})
+		.when('/sites/:site/backups', {
+			templateUrl : 'partials/site-backups.html',
+			controller : 'SiteBackupsCtrl'
+		})
 		.when('/sites/:site/tasks/:id', {
 			templateUrl : 'partials/task.html',
 			controller : 'SiteTaskCtrl'
