@@ -57,10 +57,16 @@ RestoreTask.prototype.perform = function*() {
 	
 	// Add a tag so that the old revision can be reached
 	var lastTag = (yield this.exec('git tag -l "' + site.name + '.*" | sort | tail -n 1')).stdout.trim();
-	var lastTagNumber = lastTag ? parseInt(lastTag.substr(4)) : 0;
+	var lastTagNumber = 0;
+	if (lastTag) {
+		var lastTagNumber = parseInt(lastTag.substr(lastTag.indexOf('.') + 1));
+		if (isNaN(lastTagNumber))
+			lastTagNumber = 0;
+	}
+
 	yield this.exec('git tag ' + site.name + '.' + (lastTagNumber + 1));
 	
-	yield this.exec('git reset --hard ' + this.revision);
+	yield this.exec('git reset --hard ' + ShellTask.escape(this.revision));
 
 	yield hooks.call('afterRestore', this, site);
 	
@@ -85,7 +91,7 @@ InitDataDirectoryTask.prototype.perform = function*() {
 	yield this.exec('git init data');
 	this.cd(dataPath);
 	// switch to the correct branch, but leave that branch empty (do not derive from master)
-	yield this.exec('git symbolic-ref HEAD refs/heads/' + ShellTask.escape(site.name));
+	yield this.exec('git symbolic-ref HEAD ' + ShellTask.escape("refs/heads/" + site.name));
 	// symlink, many things, similar to git-new-workdir, but so that it works with a bare
 	// root repo
 	var symlinks = [ 'logs/refs/', 'objects/', 'packed-refs', 'refs/' ];
@@ -109,13 +115,18 @@ InitDataDirectoryTask.prototype.perform = function*() {
 exports.getBackups = Q.async(function*(site) {
 	if (!(yield fs.exists(site.path + '/data/.git')))
 		return []; // no data, so no backups
+
+	var result = yield ShellTask.exec('git show-ref ' + ShellTask.escape('refs/heads/' + site.name) + ' || :',
+		site.path + '/data');
+	if (!result.stdout.trim())
+		return []; // the branch does not exist (e.g. unborn) (must discard exit ode as it is 1 when not found)
 	
 	var result = yield ShellTask.exec('git log --tags="' + site.name + '.*" --graph ' +
-			'--pretty=format:"%H%x09%at%x09%s" ' + site.name /* match the branch */,
+			'--pretty=format:"%x09%H%x09%at%x09%P%x09%s" ' + site.name /* match the branch */,
 			site.path + '/data');
 	return result.stdout.split('\n').map(function(line) {
-		var matches = line.match(/^([^0-9a-f]+)\s*([0-9a-f]+)\s*([0-9]+)\s*(.*)$/);
-		if (!matches) {
+		var parts = line.split(/\t/);
+		if (parts.length <= 1) {
 			if (line != '')
 				return {
 					type: 'guide',
@@ -127,13 +138,34 @@ exports.getBackups = Q.async(function*(site) {
 		
 		return {
 			type: 'backup',
-			prefix: matches[1],
-			revision: matches[2],
-			time: new Date(matches[3] * 1000),
-			message: matches[4]
+			prefix: parts[0],
+			revision: parts[1],
+			time: new Date(parts[2] * 1000),
+			parentRevision: parts[3],
+			message: parts[4]
 		};
 	})
 	.filter(function(v) { return v; }); // remove null entries
+});
+
+exports.getBackup = Q.async(function*(site, revision) {
+	if (!(yield fs.exists(site.path + '/data/.git')))
+		return []; // no data, so no backups
+
+	var result = yield ShellTask.exec('git log -n 1 ' +
+			'--pretty=format:"%x09%H%x09%at%x09%P%x09%s" ' + ShellTask.escape(revision),
+			site.path + '/data');
+	var lines = result.stdout.split('\n').filter(function(line) { return line.trim(); });
+	if (!lines.length)
+		return null; // not found
+
+	var parts = lines[0].split(/\t/);
+	return {
+		revision: parts[1],
+		time: new Date(parts[2] * 1000),
+		parentRevision: parts[3],
+		message: parts[4]
+	};
 });
 
 exports.BackupTask = BackupTask;

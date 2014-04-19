@@ -40,6 +40,10 @@ define(['angular', 'socket'], function(angular) {
 			backup: function(site, message) {
 				$http.post('api/sites/'  + site.name + '/backups', { message: message });
 			},
+
+			restore: function(site, backup) {
+				$http.post('api/sites/'  + site.name + '/backups/' + backup.revision + '/restore');
+			},
 			
 			getSite: function(name) {
 				// if there is a reload in progress, wait until that finished as it may add a new site
@@ -78,20 +82,27 @@ define(['angular', 'socket'], function(angular) {
 					return res.data.tasks;
 				});
 			},
-			
-			getBackups: function(site) {
-				return $http.get('api/sites/' + site.name + '/backups')
-				.then(function(res) {
-					return res.data.backups;
-				});
-			},
-			
+
 			getGlobalTasks: function() {
 				// TODO: this could sometime fetch all tasks
 				return $http.get('api/tasks')
-				.then(function(res) {
-					return res.data.tasks;
-				});
+					.then(function(res) {
+						return res.data.tasks;
+					});
+			},
+
+			getBackups: function(site) {
+				return $http.get('api/sites/' + site.name + '/backups')
+					.then(function(res) {
+						return res.data.backups;
+					});
+			},
+
+			getBackup: function(site, revision) {
+				return $http.get('api/sites/' + site.name + '/backups/' + revision)
+					.then(function(res) {
+						return res.data;
+					});
 			}
 		};
 		

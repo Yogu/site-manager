@@ -100,6 +100,32 @@ exports.start = function(port, dir) {
 			res.send(500);
 		});
 	});
+
+	app.get('/api/sites/:site/backups/:revision', function(req, res) {
+		controller.getSite(req.params.site)
+			.then(function(site) {
+				return site.getBackup(req.params.revision);
+			})
+			.then(function(backup) {
+				res.json(objects.extract(backup, '*'));
+			})
+			.catch(function(e) {
+				console.error(e.stack);
+				res.send(500);
+			});
+	});
+
+	app.post('/api/sites/:site/backups/:revision/restore', function(req, res) {
+		controller.getSite(req.params.site)
+			.then(function(site) {
+				site.schedule(site.restoreTask(req.params.revision));
+				res.send(200 /* accepted */);
+			})
+			.catch(function(e) {
+				console.error(e.stack);
+				res.send(500);
+			});
+	});
 	
 	app.get('/api/tasks', function(req, res) {
 		controller.manager.getTasks(0, 20)

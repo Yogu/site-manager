@@ -52,22 +52,41 @@ define([ 'angular', 'model' ], function(angular) {
 				model.upgrade($scope.site);
 			};
 		} ])
-		
+
 		.controller('SiteBackupsCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
 			model.getSite($routeParams.site)
 			.then(function(site) {
 				$scope.site = site;
-				
+
 				$scope.createBackup = function() {
 					var message = $scope.backupMessage;
 					model.backup($scope.site, message);
 				};
-				
+
+				$scope.restore = function(revision) {
+					model.restore($scope.site, revision);
+				};
+
 				return model.getBackups(site);
 			})
 			.then(function(backups) {
 				$scope.backups = backups;
 			});
+		} ])
+
+		.controller('SiteBackupCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
+			model.getSite($routeParams.site)
+				.then(function(site) {
+					$scope.site = site;
+
+					return model.getBackup(site, $routeParams.revision);
+				})
+				.then(function(backup) {
+					$scope.backup = backup;
+					$scope.restore = function() {
+						model.restore($scope.site, backup);
+					};
+				});
 		} ])
 		
 		.controller('SiteTasksCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {

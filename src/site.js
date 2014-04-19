@@ -52,4 +52,8 @@ Site.prototype.getBackups = function() {
 	return backups.getBackups(this);
 };
 
+Site.prototype.getBackup = function(revision) {
+	return backups.getBackup(this, revision);
+};
+
 module.exports = Site;

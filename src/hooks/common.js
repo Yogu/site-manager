@@ -22,7 +22,7 @@ hooks.register('beforeBackup', function(site) {
 });
 
 hooks.register('afterRestore', function(site) {
-	return new Task('R Data Base', function*() {
+	return new Task('Restore Data Base', function*() {
 		db = yield site.getDB();
 		if (!db) {
 			this.doLog('This site does not have a data base');
