@@ -31,8 +31,8 @@ exports.connect = Q.async(function*(options) {
 			});
 			if (params.length)
 				throw new Error('too much params specified (' + params.length + ' left');
-			var result = Q.ninvoke(connection, 'exec', sql);
-			Q.ninvoke(connection, 'save');
+			var result = yield Q.ninvoke(connection, 'exec', sql);
+			yield Q.ninvoke(connection, 'save');
 			return result;
 		}),
 		
