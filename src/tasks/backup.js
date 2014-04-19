@@ -2,6 +2,7 @@ var Task = require('../task.js');
 var fs = require('q-io/fs');
 var ShellTask = require('./shell.js');
 var Q = require('q');
+var hooks = require('../hooks.js');
 require('colors');
 
 function BackupTask(site, message) {
@@ -19,6 +20,7 @@ BackupTask.prototype.perform = function*() {
 	
 	if (!(yield fs.exists(dataPath + '/.git')))
 		yield this.runNested(new InitDataDirectoryTask(site));
+	yield hooks.call('beforeBackup', this, site);
 	
 	this.cd(dataPath);
 	yield this.exec('git add -A');
@@ -59,6 +61,8 @@ RestoreTask.prototype.perform = function*() {
 	yield this.exec('git tag ' + site.name + '.' + (lastTagNumber + 1));
 	
 	yield this.exec('git reset --hard ' + this.revision);
+
+	yield hooks.call('afterRestore', this, site);
 	
 	this.doLog('Backup restored'.green);
 	

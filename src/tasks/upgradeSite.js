@@ -1,7 +1,7 @@
 var Task = require('../task.js');
 var ShellTask = require('../tasks/shell.js');
 var Promise = require('es6-promise').Promise;
-var MigrateTask = require('./migrate.js');
+var hooks = require('../hooks.js');
 
 function UpgradeSiteTask(site) {
 	Task.call(this);
@@ -32,9 +32,12 @@ UpgradeSiteTask.prototype.perform = function*() {
 		this.doLog('Pull completed');
 		yield this.runNestedQuietly(site.loadTask());
 		
-		yield this.runNested(new MigrateTask(site));
+		yield hooks.call('afterPull', this, site);
+		yield hooks.call('afterCheckout', this, site);
 		
 		this.doLog('Upgrade succeeded'.green);
+
+		yield hooks.call('afterUpgrade', this, site);
 	} catch(err) {
 		this.doLog('Upgrade failed. Restoring backup...'.red);
 		try {
@@ -47,6 +50,8 @@ UpgradeSiteTask.prototype.perform = function*() {
 			this.doLog(restoreErr);
 			this.doLog('The upgrade error follows:');
 		}
+
+		yield hooks.call('upgradeFailed', this, site);
 		throw err;
 	}
 };

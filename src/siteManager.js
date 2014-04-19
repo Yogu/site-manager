@@ -4,6 +4,9 @@ var FetchTask = require('./tasks/fetch.js');
 var LoadSiteManagerTask = require('./tasks/loadSiteManager.js');
 var AddSiteTask = require('./tasks/addSite.js');
 
+// Register common hooks
+require('./hooks/common.js');
+
 function SiteManager(path) {
 	PersistentTaskContext.call(this);
 	this.path = path;

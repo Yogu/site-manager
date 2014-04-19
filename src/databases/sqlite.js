@@ -43,8 +43,8 @@ exports.connect = Q.async(function*(options) {
 			return;
 		}),
 		
-		backup: function(path) {
-			return fs.cp(options.path, path);
+		dump: function(path) {
+			return fs.copy(options.path, path);
 		}
 	};
 });
