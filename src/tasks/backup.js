@@ -3,6 +3,7 @@ var fs = require('q-io/fs');
 var ShellTask = require('./shell.js');
 var Q = require('q');
 var hooks = require('../hooks.js');
+var yaml = require('js-yaml');
 require('colors');
 
 function BackupTask(site, message) {
@@ -21,13 +22,24 @@ BackupTask.prototype.perform = function*() {
 	if (!(yield fs.exists(dataPath + '/.git')))
 		yield this.runNested(new InitDataDirectoryTask(site));
 	yield hooks.call('beforeBackup', this, site);
-	
+
+	// store info
+	this.doLog('Writing backup.yaml...');
+	var info = {
+		revision: site.revision
+	};
+	yield fs.write(dataPath + '/backup.yaml', yaml.safeDump(info));
+
+	this.doLog('Committing backup...');
 	this.cd(dataPath);
 	yield this.exec('git add -A');
 	yield this.exec('git commit --allow-empty -m ' + ShellTask.escape(this.message));
 
+	var revision = (yield this.execQuietly("git rev-parse HEAD")).stdout.trim();
 	this.doLog('Backup succeeded'.green);
-	var revision = (yield this.exec("git rev-parse HEAD")).stdout.trim();
+	this.doLog('backup id: ' + revision);
+
+	yield this.runNestedQuietly(site.loadTask());
 	
 	site.emit('backup');
 	
@@ -56,21 +68,30 @@ RestoreTask.prototype.perform = function*() {
 	yield this.runNested(new BackupTask(site, 'pre-restore ' + this.revision));
 	
 	// Add a tag so that the old revision can be reached
-	var lastTag = (yield this.exec('git tag -l "' + site.name + '.*" | sort | tail -n 1')).stdout.trim();
+	var lastTag = (yield this.execQuietly('git tag -l "' + site.name + '.*" | sort | tail -n 1')).stdout.trim();
 	var lastTagNumber = 0;
 	if (lastTag) {
 		var lastTagNumber = parseInt(lastTag.substr(lastTag.indexOf('.') + 1));
 		if (isNaN(lastTagNumber))
 			lastTagNumber = 0;
 	}
+	yield this.execQuietly('git tag ' + site.name + '.' + (lastTagNumber + 1));
 
-	yield this.exec('git tag ' + site.name + '.' + (lastTagNumber + 1));
-	
+	this.doLog('Restoring data directory...');
 	yield this.exec('git reset --hard ' + ShellTask.escape(this.revision));
+
+	this.doLog('Restoring repository...');
+	var info = yaml.safeLoad(yield fs.read(dataPath + '/backup.yaml'))
+	this.cd(site.path);
+	this.exec('git reset --hard ' + ShellTask.escape(info.revision));
+
+	yield hooks.call('afterCheckout', this, site);
 
 	yield hooks.call('afterRestore', this, site);
 	
 	this.doLog('Backup restored'.green);
+
+	yield this.runNestedQuietly(site.loadTask());
 	
 	site.emit('restore');
 };
@@ -152,20 +173,28 @@ exports.getBackup = Q.async(function*(site, revision) {
 	if (!(yield fs.exists(site.path + '/data/.git')))
 		return []; // no data, so no backups
 
+	var dataPath = site.path + '/data';
+
 	var result = yield ShellTask.exec('git log -n 1 ' +
 			'--pretty=format:"%x09%H%x09%at%x09%P%x09%s" ' + ShellTask.escape(revision),
-			site.path + '/data');
+			dataPath);
 	var lines = result.stdout.split('\n').filter(function(line) { return line.trim(); });
 	if (!lines.length)
 		return null; // not found
 
 	var parts = lines[0].split(/\t/);
-	return {
+	var backup = {
 		revision: parts[1],
 		time: new Date(parts[2] * 1000),
 		parentRevision: parts[3],
 		message: parts[4]
 	};
+
+	result = yield ShellTask.exec("git show " + ShellTask.escape(revision + ':backup.yaml'), dataPath);
+	var info = yaml.safeLoad(result.stdout);
+	backup.siteRevision = info.revision;
+
+	return backup;
 });
 
 exports.BackupTask = BackupTask;
