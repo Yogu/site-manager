@@ -116,10 +116,14 @@ Task.prototype.runNested = function(task) {
 	return task;
 };
 
-Task.prototype.runNestedQuietly = function(task) {
-	this.doLog('run: '.bold.blue + task.name.blue);
+Task.prototype.runNestedQuietly = function(task, veryQuiet) {
+	if (!veryQuiet)
+		this.doLog('run: '.bold.blue + task.name.blue);
 	task.start();
 	return task.catch(function(err) {
+		if (veryQuiet)
+			this.doLog('run: '.bold.blue + task.name.blue);
+
 		// only log in case of error
 		task.log.split("\n").forEach(function(message) {
 			if (message != '')
@@ -139,6 +143,12 @@ Task.prototype.exec = function(shellCommand, cwd) {
 	var task = new ShellTask(shellCommand, cwd || this.cwd);
 	return this.runNested(task);
 };
+
+Task.prototype.execQuietly = function(shellCommand, cwd) {
+	var ShellTask = require('./tasks/shell.js');
+	var task = new ShellTask(shellCommand, cwd || this.cwd);
+	return this.runNestedQuietly(task, true);
+}
 
 Object.defineProperty(Task.prototype, 'plainLog', {
 	get: function() { return strings.stripColors(this.log); }
