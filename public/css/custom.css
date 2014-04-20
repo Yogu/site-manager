@@ -2,3 +2,45 @@ pre {
 	word-wrap: normal;
 	overflow-x: auto;
 }
+
+.backup-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.backup-table td,
+.backup-table th {
+    padding-right: 10px;
+}
+
+.backup-table td.prefix-column,
+.backup-table td.id-column {
+    font-family: monospace;
+}
+
+.backup-table .prefix-column {
+    width: 50px;
+}
+
+.backup-table .id-column {
+    width: 100px;
+}
+
+.backup-table .time-column {
+    width: 200px;
+}
+
+.backup-table .message-column {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.backup-table tr.current {
+    background: #dddddd;
+}
+
+.backup-table tr.current .message-column:before {
+    content: '(current) ';
+    font-weight: bold;
+}

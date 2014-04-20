@@ -7,14 +7,24 @@
 <input type="text" ng-model="backupMessage" placeholder="backup message">
 <button class="btn btn-default" ng-click="createBackup()">Create Backup</button>
 
-<pre style="white-space: nowrap;">
-	<div ng-repeat="backup in backups" ng-switch on="backup.type">
-		<div ng-switch-when="backup">
-			<span style="white-space: pre;">{{backup.prefix}}</span>
-			<a href="#/sites/{{site.name}}/backups/{{backup.revision}}">{{backup.revision | limitTo:10}}</a>
-			{{backup.message}}
-			({{backup.time | date:'medium'}})
-		</div>
-		<div style="white-space: pre;" ng-switch-when="guide">{{backup.prefix}}</div>
-	</div>
-</pre>
+<table class="backup-table">
+	<thead>
+		<tr>
+			<th class="prefix-column"></th>
+			<th class="id-column">ID</th>
+			<th class="time-column">Date / Time</th>
+			<th class="message-column">Message</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="backup in backups" ng-class="backup.isCurrent ? 'current' : ''">
+			<td class="prefix-column">{{backup.prefix}}</td>
+			<td class="id-column" ng-if="backup.type == 'backup'">
+				<a href="#/sites/{{site.name}}/backups/{{backup.revision}}">{{backup.revision | limitTo:10}}</a>
+			</td>
+			<td class="time-column" ng-if="backup.type == 'backup'">{{backup.time | date:'medium'}}</td>
+			<td class="message-column" ng-if="backup.type == 'backup'">{{backup.message}}</td>
+			<td ng-if="backup.type == 'guide'" colspan="3"></td>
+		</tr>
+	</tbody>
+</table>

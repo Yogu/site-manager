@@ -137,10 +137,16 @@ exports.getBackups = Q.async(function*(site) {
 	if (!(yield fs.exists(site.path + '/data/.git')))
 		return []; // no data, so no backups
 
-	var result = yield ShellTask.exec('git show-ref ' + ShellTask.escape('refs/heads/' + site.name) + ' || :',
-		site.path + '/data');
-	if (!result.stdout.trim())
-		return []; // the branch does not exist (e.g. unborn) (must discard exit ode as it is 1 when not found)
+	var currentBackupRevision;
+	try {
+		var result = yield ShellTask.exec('git rev-parse ' + ShellTask.escape('refs/heads/' + site.name),
+				site.path + '/data');
+		currentBackupRevision = result.stdout.trim();
+	} catch(err) {
+		if (typeof err == 'object' && err.code == 128)
+			return []; // the branch does not exist (e.g. unborn)
+		throw err;
+	}
 	
 	var result = yield ShellTask.exec('git log --tags="' + site.name + '.*" --graph ' +
 			'--pretty=format:"%x09%H%x09%at%x09%P%x09%s" ' + site.name /* match the branch */,
@@ -163,7 +169,8 @@ exports.getBackups = Q.async(function*(site) {
 			revision: parts[1],
 			time: new Date(parts[2] * 1000),
 			parentRevision: parts[3],
-			message: parts[4]
+			message: parts[4],
+			isCurrent: parts[1] == currentBackupRevision
 		};
 	})
 	.filter(function(v) { return v; }); // remove null entries
