@@ -1,6 +1,6 @@
 var Task = require('../task.js');
-var exec = require('child-process-promise').exec;
 var Q = require('q');
+var exec = Q.nfbind(require('child_process').exec);
 
 function ShellTask(command, cwd) {
 	Task.call(this);
@@ -17,13 +17,14 @@ ShellTask.prototype.perform = function*() {
 		options.cwd = this.cwd;
 	
 	var result = yield exec(this.command, options);
-	
+	result = { stdout: result[0], stderr: result[1] };
+
 	if (result.stdout)
 		this.doLog(result.stdout);
 	if (result.stderr)
 		this.doLog(result.stderr);
 	
-	return { stdout: result.stdout, stderr: result.stderr };
+	return result;
 };
 
 ShellTask.escape = function(cmd) {

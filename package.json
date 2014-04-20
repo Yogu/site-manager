@@ -19,10 +19,9 @@
 		"rimraf": "2.2.x",
 		"ncp": "0.5.x",
 		"walk": "2.3.x",
-		"moment": "2.5.x",
+		"moment": "2.6.x",
 		"q": "Yogu/q#async-unwraps-returned-promises",
 		"q-io": "1.11.x",
-		"child-process-promise": "0.1.x",
 		"node-sqlite-purejs": "0.0.x",
 		"node.extend": "1.0.x",
 		"colors": "*",
@@ -32,8 +31,8 @@
 	"devDependencies": {
 		"coveralls": "2.10.x",
 		"jasmine-node": "1.14.x",
-		"karma": "~0.10",
-		"protractor": "0.20.x",
+		"karma": "0.102.x",
+		"protractor": "0.21.x",
 		"phantomjs": "1.9.x",
 		"istanbul": "gotwarlost/istanbul#harmony"
 	},
