@@ -39,7 +39,7 @@
 	},
 	"scripts": {
 		"postinstall": "bower install",
-		"start": "node --harmony_generators index.js",
+		"start": "node --harmony_generators test/index.js",
 		"server-unit-test-with-coverage": "node --harmony_generators node_modules/istanbul/lib/cli.js cover -x 'test/**' jasmine-node -- --captureExceptions test/server-unit",
 		"server-unit-test": "node --harmony_generators node_modules/jasmine-node/bin/jasmine-node --captureExceptions test/server-unit",
 		"client-unit-test": "karma start test/karma-conf.js",
