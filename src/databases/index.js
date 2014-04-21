@@ -1,4 +1,5 @@
 var sqlite = require('./sqlite.js');
+var mysql = require('./mysql.js');
 var Q = require('q');
 
 /**
@@ -15,6 +16,8 @@ exports.connect = function(options) {
 	switch (options.type) {
 	case 'sqlite':
 		return sqlite.connect(options);
+	case 'mysql':
+		return mysql.connect(options);
 	default:
 		return Q.reject(new Error('Unsupported data base type: ' + options.type));
 	}
