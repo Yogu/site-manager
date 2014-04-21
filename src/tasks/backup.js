@@ -85,9 +85,8 @@ RestoreTask.prototype.perform = function*() {
 	this.cd(site.path);
 	this.exec('git reset --hard ' + ShellTask.escape(info.revision));
 
-	yield hooks.call('afterCheckout', this, site);
-
 	yield hooks.call('afterRestore', this, site);
+	yield hooks.call('afterCheckout', this, site);
 	
 	this.doLog('Backup restored'.green);
 
