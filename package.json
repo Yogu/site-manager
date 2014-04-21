@@ -31,7 +31,11 @@
 	"devDependencies": {
 		"coveralls": "2.10.x",
 		"jasmine-node": "1.14.x",
-		"karma": "0.102.x",
+		"karma": "0.12.x",
+		"karma-cli": "*",
+		"karma-jasmine": "0.1.x",
+		"karma-requirejs": "0.2.x",
+		"karma-phantomjs-launcher": "0.1.x",
 		"protractor": "0.21.x",
 		"phantomjs": "1.9.x",
 		"istanbul": "gotwarlost/istanbul#harmony"
