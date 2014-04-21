@@ -56,8 +56,8 @@ exports.connect = Q.async(function*(options) {
 			yield this.exec(sql);
 		}),
 		
-		dump: function*(path) {
-			yield ShellTask.exec("mysqldump -u " + ShellTask.escape(options.user) + " " +
+		dump: function(path) {
+			return ShellTask.exec("mysqldump -u " + ShellTask.escape(options.user) + " " +
 				ShellTask.escape("--password=" + options.password) + " " +
 				ShellTask.escape("--host=" + options.host) + " " +
 				ShellTask.escape(options.database) + " > " + ShellTask.escape(path));
