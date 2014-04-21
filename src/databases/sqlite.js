@@ -36,6 +36,12 @@ exports.connect = Q.async(function*(options) {
 			return result;
 		}),
 		
+		clear: Q.async(function*() {
+			yield fs.remove(options.path);
+			// reconnect
+			connection = yield Q.nfcall(sqlite.open, options.path, {});
+		}),
+		
 		restore: Q.async(function*(path) {
 			yield fs.copy(path, options.path);
 			// reconnect

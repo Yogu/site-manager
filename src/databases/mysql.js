@@ -39,7 +39,7 @@ exports.connect = Q.async(function*(options) {
 			var result = yield Q.ninvoke(connection, 'query', "SELECT concat('DROP TABLE IF EXISTS ', table_name, ';') AS statement " +
 				"FROM information_schema.tables " +
 				"WHERE table_schema = ?", [ options.database]);
-			var sql = "SET FOREIGN_KEY_CHECKS=0" + result.join('\n');
+			var sql = "SET FOREIGN_KEY_CHECKS=0" + result.map(function(row) { return row.query;}).join('\n');
 
 			yield Q.ninvoke(connection, 'query',  sql);
 		}),
