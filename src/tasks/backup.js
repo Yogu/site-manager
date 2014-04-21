@@ -67,8 +67,8 @@ RestoreTask.prototype.perform = function*() {
 	// To be safe, backup first
 	yield this.runNested(new BackupTask(site, 'pre-restore ' + this.revision));
 	
-	// Add a tag so that the old revision can be reached
-	var lastTag = (yield this.execQuietly('git tag -l "' + site.name + '.*" | sort | tail -n 1')).stdout.trim();
+	// Add a tag so that the old revision can be reached (version-sort lists test.10 after test.9)
+	var lastTag = (yield this.execQuietly('git tag -l "' + site.name + '.*" | sort --version-sort | tail -n 1')).stdout.trim();
 	var lastTagNumber = 0;
 	if (lastTag) {
 		var lastTagNumber = parseInt(lastTag.substr(lastTag.indexOf('.') + 1));
