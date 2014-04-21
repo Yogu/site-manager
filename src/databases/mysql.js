@@ -4,6 +4,8 @@ var ShellTask = require('../tasks/shell.js');
 var fs = require('q-io/fs');
 
 exports.connect = Q.async(function*(options) {
+	options = Object.create(options);
+	options.multipleStatements = true;
 	
 	var connection = mysql.createConnection(options);
 	yield Q.ninvoke(connection, 'connect');
