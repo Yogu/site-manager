@@ -51,6 +51,10 @@ exports.connect = Q.async(function*(options) {
 		
 		dump: function(path) {
 			return fs.copy(options.path, path);
+		},
+		
+		snippets: {
+			now: "datetime()"
 		}
 	};
 });

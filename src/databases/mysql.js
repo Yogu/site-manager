@@ -49,6 +49,10 @@ exports.connect = Q.async(function*(options) {
 				ShellTask.escape("--password=" + options.password) + " " +
 				ShellTask.escape("--host=" + options.host) + " " +
 				ShellTask.escape(options.database) + " > " + ShellTask.escape(path));
+		},
+		
+		snippets: {
+			now: "NOW()"
 		}
 	};
 });

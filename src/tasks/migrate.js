@@ -57,7 +57,8 @@ MigrateTask.prototype.perform = function*() {
 		
 		var sql = yield fs.read(migrationsPath + '/' + migration + '.sql');
 		yield db.exec(sql);
-		yield db.exec('INSERT INTO schema_migrations (version, run_time) VALUES (?, datetime());', 
+		yield db.exec('INSERT INTO schema_migrations (version, run_time) VALUES ' +
+				'(?, ' + db.snippets.now + ');', 
 				[ migration ]);
 	}
 };
