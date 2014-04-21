@@ -15,6 +15,7 @@ ShellTask.prototype.perform = function*() {
 	var options = {};
 	if (this.cwd)
 		options.cwd = this.cwd;
+	options.maxBuffer = 1024 * 1024 * 10;
 	
 	var result = yield exec(this.command, options);
 	result = { stdout: result[0], stderr: result[1] };
