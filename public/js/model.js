@@ -41,6 +41,10 @@ define(['angular', 'socket'], function(angular) {
 				$http.post('api/sites/'  + site.name + '/backups', { message: message });
 			},
 
+			reset: function(site) {
+				$http.post('api/sites/'  + site.name + '/reset');
+			},
+			
 			restore: function(site, backup) {
 				$http.post('api/sites/'  + site.name + '/backups/' + backup.revision + '/restore');
 			},

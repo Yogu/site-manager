@@ -51,6 +51,9 @@ define([ 'angular', 'model' ], function(angular) {
 			$scope.upgrade = function() {
 				model.upgrade($scope.site);
 			};
+			$scope.reset = function() {
+				model.reset($scope.site);
+			};
 		} ])
 
 		.controller('SiteBackupsCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {

@@ -28,16 +28,20 @@ exports.connect = Q.async(function*(options) {
 		
 		restore: Q.async(function*(path) {
 			// Drop all tables
+			yield this.clear();
+
+			// restore backup
+			var backup = yield fs.read(path);
+			yield Q.ninvoke(connection, 'query',  backup);
+		}),
+		
+		clear: Q.async(function*() {
 			var result = yield Q.ninvoke(connection, 'query', "SELECT concat('DROP TABLE IF EXISTS ', table_name, ';') AS statement " +
 				"FROM information_schema.tables " +
 				"WHERE table_schema = ?", [ options.database]);
 			var sql = "SET FOREIGN_KEY_CHECKS=0" + result.join('\n');
 
 			yield Q.ninvoke(connection, 'query',  sql);
-
-			// restore backup
-			var backup = yield fs.read(path);
-			yield Q.ninvoke(connection, 'query',  backup);
 		}),
 		
 		dump: function*(path) {

@@ -21,10 +21,11 @@
 		<dt>Links:</dt>
 		<dd><a href="#/sites/{{site.name}}/tasks">tasks</a></dd>
 		<dd><a href="#/sites/{{site.name}}/backups">backups</a></dd>
+		<dd>
+			<button ng-if="site.canUpgrade" class="btn btn-success" ng-click="upgrade()">Upgrade {{site.behindBy}} commit(s)</button>
+			<button class="btn btn-danger" ng-click="reset()">Reset (Delete all data)</button>
+		</dd>
 	</dl>
-	<div ng-if="site.canUpgrade">
-		<button ng-click="upgrade()">Upgrade {{site.behindBy}} commit(s)</button>
-	</div>
 </div>
 <div ng-if="!site.isLoaded && !site.isLoadFailed">
 	<span>loading...</span>

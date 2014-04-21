@@ -87,6 +87,18 @@ exports.start = function(port, dir) {
 		});
 	});
 	
+	app.post('/api/sites/:site/reset', function(req, res) {
+		controller.getSite(req.params.site)
+		.then(function(site) {
+			site.schedule(site.resetTask());
+			res.send(202 /* accepted */);
+		})
+		.catch(function(e) {
+			console.error(e.stack);
+			res.send(500);
+		});
+	});
+	
 	app.get('/api/sites/:site/backups', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {

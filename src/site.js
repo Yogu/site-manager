@@ -5,6 +5,7 @@ var UpgradeSiteTask = require('./tasks/upgradeSite.js');
 var backups = require('./tasks/backup.js');
 var BackupTask = backups.BackupTask;
 var RestoreTask = backups.RestoreTask;
+var ResetTask = require('./tasks/reset.js');
 var databases = require('./databases');
 var Q = require('q');
 
@@ -42,6 +43,10 @@ Site.prototype.backupTask = function(message) {
 
 Site.prototype.restoreTask = function(revision) {
 	return new RestoreTask(this, revision);
+};
+
+Site.prototype.resetTask = function() {
+	return new ResetTask(this);
 };
 
 Site.prototype.getDB = function() {
