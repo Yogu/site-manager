@@ -17,7 +17,7 @@ exports.connect = Q.async(function*(options) {
 		 * 
 		 * Not intended to be used with untrusted params.
 		 */
-		exec: Q.async(function*(sql, params) {
+		exec: function(sql, params) {
 			if (params === undefined)
 				params = [];
 			if (!(params instanceof Array))
@@ -25,8 +25,18 @@ exports.connect = Q.async(function*(options) {
 			if (typeof sql != 'string')
 				throw new Error('sql must be a string');
 
-			return yield Q.ninvoke(connection, 'query', sql, params);
-		}),
+			// manually create the promise because connection.query() sometimes returns two values,
+			// and then the promise would resolve in an array.
+			var deferred = Q.defer();
+			Q.ninvoke(connection, 'query', sql, params, function(err, result) {
+				if (err)
+					deferred.reject(err);
+				else
+					deferred.resolve(result);
+			});
+			
+			return deferred.promise;
+		},
 		
 		restore: Q.async(function*(path) {
 			// Drop all tables
@@ -38,12 +48,12 @@ exports.connect = Q.async(function*(options) {
 		}),
 		
 		clear: Q.async(function*() {
-			var result = yield Q.ninvoke(connection, 'query', "SELECT concat('DROP TABLE IF EXISTS ', table_name, ';') AS statement " +
+			var result = yield this.exec("SELECT concat('DROP TABLE IF EXISTS ', table_name, ';') AS statement " +
 				"FROM information_schema.tables " +
 				"WHERE table_schema = ?", [ options.database]);
-			var sql = "SET FOREIGN_KEY_CHECKS=0" + result.map(function(row) { return row.query;}).join('\n');
+			var sql = "SET FOREIGN_KEY_CHECKS=0; " + result.map(function(row) { return row.statement;}).join('\n');
 
-			yield Q.ninvoke(connection, 'query',  sql);
+			yield this.exec(sql);
 		}),
 		
 		dump: function*(path) {
