@@ -11,7 +11,7 @@ require('q').longStackSupport = true;
 expressValidator.validator.extend('isIdentifier', function (str) {
 	if (typeof str != 'string')
 		return false;
-    return str.match(/[a-zA-Z0-9_\-\.]+/) !== null;
+	return str.match(/[a-zA-Z0-9_\-\.]+/) !== null;
 });
 
 exports.start = function(port, dir) {
