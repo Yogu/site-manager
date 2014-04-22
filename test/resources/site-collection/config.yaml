@@ -5,6 +5,11 @@ logRoot: logs
 repo: repo.git # path to bare repository that is used as a proxy
 backupRepo: backups.git # path to a bare repository that stores all the backups
 
+mail:
+  sender: Site Manager <site-manager@example.com>
+  transport: sendmail
+  transportOptions:
+
 # data base defaults (prototype for site db option)
 db:
   type: sqlite

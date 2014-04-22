@@ -45,6 +45,7 @@ LoadSiteManagerTask.prototype.perform = function*() {
 		var baseDBConfig = config.db;
 	else
 		baseDBConfig = {};
+	manager.mailConfig = config.mail || { transport: 'sendmail', sender: 'Site Manager <site-manager@example.com>' };
 	
 	var sites = yaml.safeLoad(yield fs.read(manager.path + '/sites.yaml'));
 		
