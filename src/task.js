@@ -96,6 +96,9 @@ Task.prototype.once = function() {
 };
 
 Task.prototype.doLog = function(message) {
+	if (message == undefined)
+		return;
+	
 	if (typeof message != 'string')
 		message = JSON.stringify(message);
 	
