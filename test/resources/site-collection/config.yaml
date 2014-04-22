@@ -10,6 +10,8 @@ mail:
   transport: sendmail
   transportOptions:
 
+notifyLastCommitterOnFailedUpgrade: false
+
 # data base defaults (prototype for site db option)
 db:
   type: sqlite

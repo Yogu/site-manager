@@ -19,12 +19,13 @@ function Site(name, path) {
 	this.behindBy = null;
 	this.revision = null;
 	this.branch = null;
-	this.remoteRevision = null;
+	this.upstreamRevision = null;
 	this.isLoaded = false;
 	this._loadedDeferred = Q.defer();
 	this.loaded = this._loadedDeferred.promise;
 	this.isLoadFailed = false;
 	this.dbConfig = { };
+	this.watchers = [];
 }
 
 Site.prototype = Object.create(PersistentTaskContext.prototype);

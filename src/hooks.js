@@ -1,7 +1,6 @@
 var Q = require('q');
 
-var hookNames = [ 'afterCheckout', 'afterPull', 'beforeBackup', 'afterRestore', 'afterUpgrade',
-                  'upgradeFailed' ];
+var hookNames = [ 'afterCheckout', 'afterPull', 'beforeBackup', 'afterRestore', 'afterUpgrade', 'upgradeFailed' ];
 
 var hooks = {};
 for (var i = 0; i < hookNames.length; i++)
@@ -20,7 +19,7 @@ exports.register = function(name, taskBuilder) {
 	hooks[name].push(taskBuilder);
 };
 
-exports.call = Q.async(function*(name, task, site) {
+exports.call = Q.async(function*(name, task, site, args) {
 	if (!(name in hooks))
 		throw new Error('Unrecognized hook: ' + name);
 	
@@ -30,7 +29,8 @@ exports.call = Q.async(function*(name, task, site) {
 	
 	task.doLog('Calling ' + theHooks.length + ' ' + name + ' hooks');
 	for (var i = 0; i < theHooks.length; i++) {
-		var subTask = theHooks[i](site);
-		yield task.runNested(subTask);
+		var subTask = theHooks[i](site, args);
+		if (subTask)
+			yield task.runNested(subTask);
 	}
 });

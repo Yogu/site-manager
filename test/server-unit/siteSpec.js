@@ -30,7 +30,7 @@ describe("Site", function() {
 	it("can upgrade", function(done) {
 		resources.use(function(resourcesPath) {
 			var site = new Site("test", path.resolve(resourcesPath, 'site-collection/sites/test'));
-			site.siteManager = { backupRepoPath: resourcesPath + '/site-collection/backups.git' };
+			site.siteManager = { backupRepoPath: resourcesPath + '/site-collection/backups.git', config: {} };
 			var task = site.upgradeTask();
 			site.schedule(task);
 			task.then(function() {
@@ -52,7 +52,7 @@ describe("Site", function() {
 	it("can backup sits with fully set up data directory", function(done) {
 		resources.use(function(resourcesPath) {
 			var site = new Site("dev", path.resolve(resourcesPath, 'site-collection/sites/dev'));
-			site.siteManager = { backupRepoPath: resourcesPath + '/site-collection/backups.git' };
+			site.siteManager = { backupRepoPath: resourcesPath + '/site-collection/backups.git', config: {} };
 			var task = site.backupTask('the message');
 			site.schedule(task);
 			task.then(function() {
@@ -71,7 +71,7 @@ describe("Site", function() {
 	it("can backup sites without data directory", function(done) {
 		resources.use(function(resourcesPath) {
 			var site = new Site("test", path.resolve(resourcesPath, 'site-collection/sites/test'));
-			site.siteManager = { backupRepoPath: resourcesPath + '/site-collection/backups.git' };
+			site.siteManager = { backupRepoPath: resourcesPath + '/site-collection/backups.git', config: {} };
 			var task = site.backupTask('the message');
 			site.schedule(task);
 			task.then(function() {

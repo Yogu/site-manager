@@ -26,6 +26,7 @@ UpgradeSiteTask.prototype.perform = function*() {
 			'pre-upgrade ' + site.revision + '..' + site.upstreamRevision));
 	
 	try {
+        var oldRevision = site.revision;
 		this.doLog('Pulling incoming commits...');
 		yield this.exec('git pull --ff-only');
 		
@@ -37,7 +38,7 @@ UpgradeSiteTask.prototype.perform = function*() {
 		
 		this.doLog('Upgrade succeeded'.green);
 
-		yield hooks.call('afterUpgrade', this, site);
+		yield hooks.call('afterUpgrade', this, site, { upgradeTaskID: this.id, oldRevision: oldRevision });
 	} catch(err) {
 		this.doLog('Upgrade failed. Restoring backup...'.red);
 		try {
@@ -51,7 +52,7 @@ UpgradeSiteTask.prototype.perform = function*() {
 			this.doLog('The upgrade error follows:');
 		}
 
-		yield hooks.call('upgradeFailed', this, site);
+		yield hooks.call('upgradeFailed', this, site, { errorLog: this.log, upgradeTaskID: this.id } );
 		throw err;
 	}
 };

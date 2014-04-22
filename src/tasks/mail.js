@@ -3,7 +3,6 @@ var nodemailer = require('nodemailer');
 
 function MailTask(config, subject, contents, recipients) {
 	Task.call(this);
-	this.siteManager = siteManager;
 	this.name = 'Send Mail (subject: ' + subject + ')';
 	this.config = config;
 	this.subject = subject;
@@ -14,10 +13,10 @@ function MailTask(config, subject, contents, recipients) {
 MailTask.prototype = Object.create(Task.prototype);
 
 MailTask.prototype.perform = function*() {
-	var transport = nodemailer.createTransport(config.transport, config.transportOptions || {});
+	var transport = nodemailer.createTransport(this.config.transport, this.config.transportOptions || {});
 
 	var mailOptions = {
-		from: config.sender,
+		from: this.config.sender,
 		to: this.recipients.join(', '),
 		subject: this.subject,
 		text: this.contents

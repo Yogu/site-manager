@@ -45,8 +45,12 @@ LoadSiteManagerTask.prototype.perform = function*() {
 		var baseDBConfig = config.db;
 	else
 		baseDBConfig = {};
+
+	var globalWatchers = config.watchers || [];
+	manager.ownURL = config.ownURL || 'http://localhost:8888/';
 	manager.mailConfig = config.mail || { transport: 'sendmail', sender: 'Site Manager <site-manager@example.com>' };
-	
+	manager.config = config;
+
 	var sites = yaml.safeLoad(yield fs.read(manager.path + '/sites.yaml'));
 		
 	var newSites = [];
@@ -71,6 +75,9 @@ LoadSiteManagerTask.prototype.perform = function*() {
 			site.dbConfig = baseDBConfig;
 		if (site.dbConfig.path)
 			site.dbConfig.path = path.resolve(manager.path, site.dbConfig.path);
+
+		site.watchers = globalWatchers.concat(siteConfig.watchers || []);
+		site.ownURL = manager.ownURL + '#/sites/' + site.name;
 		
 		if (this.loadSites || existingSites.length == 0 /* always load new sites */)
 			site.schedule(site.loadTask());
