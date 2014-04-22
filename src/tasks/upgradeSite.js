@@ -35,10 +35,6 @@ UpgradeSiteTask.prototype.perform = function*() {
 		
 		yield hooks.call('afterPull', this, site);
 		yield hooks.call('afterCheckout', this, site);
-		
-		this.doLog('Upgrade succeeded'.green);
-
-		yield hooks.call('afterUpgrade', this, site, { upgradeTaskID: this.id, oldRevision: oldRevision });
 	} catch(err) {
 		this.doLog('Upgrade failed. Restoring backup...'.red);
 		try {
@@ -52,9 +48,12 @@ UpgradeSiteTask.prototype.perform = function*() {
 			this.doLog('The upgrade error follows:');
 		}
 
-		yield hooks.call('upgradeFailed', this, site, { errorLog: this.log, upgradeTaskID: this.id } );
+		yield hooks.call('upgradeFailed', this, site, { errorLog: this.plainLog, upgradeTaskID: this.id } );
 		throw err;
 	}
+
+	this.doLog('Upgrade succeeded'.green);
+	yield hooks.call('afterUpgrade', this, site, { upgradeTaskID: this.id, oldRevision: oldRevision });
 };
 
 module.exports = UpgradeSiteTask;
