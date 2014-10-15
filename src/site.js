@@ -8,6 +8,7 @@ var RestoreTask = backups.RestoreTask;
 var ResetTask = require('./tasks/reset.js');
 var databases = require('./databases');
 var Q = require('q');
+var fs = require('q-io/fs');
 
 function Site(name, path) {
 	PersistentTaskContext.call(this);
@@ -61,5 +62,14 @@ Site.prototype.getBackups = function() {
 Site.prototype.getBackup = function(revision) {
 	return backups.getBackup(this, revision);
 };
+
+Site.prototype.modifyConfig = Q.async(function*(changer) {
+	var sites = yaml.safeLoad(yield fs.read(this.siteManager.path + '/sites.yaml'));
+	var site = sites[this.name];
+	if (!site)
+		throw new Error('site ' + this.name + ' not found in sites.yaml');
+	changer(site);
+	yield fs.write(this.siteManager.path + '/sites.yaml', yaml.safeDump(sites));
+});
 
 module.exports = Site;

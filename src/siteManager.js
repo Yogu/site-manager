@@ -27,6 +27,14 @@ SiteManager.prototype.fetchTask = function() {
 
 SiteManager.prototype.addSiteTask = function(siteName, branch) {
 	return new AddSiteTask(this, siteName, branch);
-}
+};
+
+SiteManager.prototype.getSite = function(siteName) {
+	for (var i = 0; i <  this.sites.length; i++) {
+		if (this.sites[i].name == siteName)
+			return this.sites[i];
+	}
+	return null;
+};
 
 module.exports = SiteManager;

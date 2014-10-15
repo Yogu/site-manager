@@ -2,9 +2,11 @@ var Task = require('../task.js');
 var fs = require('q-io/fs');
 var Q = require('q');
 var yaml = require('js-yaml');
+var hooks = require('../hooks.js');
 
-function AddSiteTask(siteManager, siteName, branch) {
+function AddSiteTask(siteManager, siteName, branch, options) {
 	Task.call(this);
+	this.options = options | {};
 	this.siteManager = siteManager;
 	this.name = 'Add site ' + siteName;
 	this.siteName = siteName;
@@ -87,6 +89,10 @@ AddSiteTask.prototype.perform = function*() {
 	yield fs.write(manager.path + '/sites.yaml', yaml.safeDump(sites));
 
 	yield this.runNestedQuietly(manager.loadTask(false));
+	var site = manager.getSite(siteName);
+	if (!site)
+		throw new Error('site has not been loaded');
+	yield hooks.call('afterCreate', this, site);
 };
 
 module.exports = AddSiteTask;

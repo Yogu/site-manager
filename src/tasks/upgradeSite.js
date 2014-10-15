@@ -14,25 +14,25 @@ UpgradeSiteTask.prototype = Object.create(Task.prototype);
 UpgradeSiteTask.prototype.perform = function*() {
 	var site = this.site;
 	this.cd(this.site.path);
-	
+
 	this.doLog('Checking if site can be upgraded...');
 	yield this.runNestedQuietly(this.site.loadTask());
-	
+
 	if (!this.site.canUpgrade)
 		throw new Error("Can not upgrade");
 
 	this.doLog('Upgrade is possible. Backing up...');
 	var backupRevision = yield this.runNested(site.backupTask(
 			'pre-upgrade ' + site.revision + '..' + site.upstreamRevision));
-	
+
+	var oldRevision = site.revision;
 	try {
-        var oldRevision = site.revision;
 		this.doLog('Pulling incoming commits...');
 		yield this.exec('git pull --ff-only');
-		
+
 		this.doLog('Pull completed');
 		yield this.runNestedQuietly(site.loadTask());
-		
+
 		yield hooks.call('afterPull', this, site);
 		yield hooks.call('afterCheckout', this, site);
 	} catch(err) {
