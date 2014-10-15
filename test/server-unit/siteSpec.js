@@ -26,7 +26,7 @@ describe("Site", function() {
 			.then(done);
 		}.bind(this));
 	}, 5000);
-	
+
 	it("can upgrade", function(done) {
 		resources.use(function(resourcesPath) {
 			var site = new Site("test", path.resolve(resourcesPath, 'site-collection/sites/test'));
@@ -48,7 +48,7 @@ describe("Site", function() {
 			.then(done);
 		}.bind(this));
 	}, 5000);
-	
+
 	it("can backup sits with fully set up data directory", function(done) {
 		resources.use(function(resourcesPath) {
 			var site = new Site("dev", path.resolve(resourcesPath, 'site-collection/sites/dev'));
@@ -67,7 +67,7 @@ describe("Site", function() {
 			.then(done);
 		}.bind(this));
 	}, 5000);
-	
+
 	it("can backup sites without data directory", function(done) {
 		resources.use(function(resourcesPath) {
 			var site = new Site("test", path.resolve(resourcesPath, 'site-collection/sites/test'));
@@ -84,6 +84,16 @@ describe("Site", function() {
 			})
 			.catch(function(err) { this.fail(err); }.bind(this))
 			.then(done);
+		}.bind(this));
+	}, 5000);
+
+	it("can modify its config", function(done) {
+		resources.use(function(resourcesPath) {
+			var site = new Site("test", path.resolve(resourcesPath, 'site-collection/sites/test'));
+			site.siteManager = { path: resourcesPath + '/site-collection' };
+			site.modifyConfig(function() { })
+				.catch(function(err) { this.fail(err); }.bind(this))
+				.then(done);
 		}.bind(this));
 	}, 5000);
 });

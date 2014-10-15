@@ -9,12 +9,13 @@ var ResetTask = require('./tasks/reset.js');
 var databases = require('./databases');
 var Q = require('q');
 var fs = require('q-io/fs');
+var yaml = require('js-yaml');
 
 function Site(name, path) {
 	PersistentTaskContext.call(this);
 	this.name = name;
 	this.path = path;
-	
+
 	this.isClean = null;
 	this.aheadBy = null;
 	this.behindBy = null;
