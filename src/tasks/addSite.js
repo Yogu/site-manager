@@ -93,6 +93,7 @@ AddSiteTask.prototype.perform = function*() {
 	if (!site)
 		throw new Error('site has not been loaded');
 	yield hooks.call('afterCreate', this, site);
+	yield hooks.call('afterCheckout', this, site);
 };
 
 module.exports = AddSiteTask;
