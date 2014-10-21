@@ -92,6 +92,8 @@ AddSiteTask.prototype.perform = function*() {
 	var site = manager.getSite(siteName);
 	if (!site)
 		throw new Error('site has not been loaded');
+	this.doLog('Waiting for site to be loaded...');
+	yield site.loaded;
 	yield hooks.call('afterCreate', this, site);
 	yield hooks.call('afterCheckout', this, site);
 };
