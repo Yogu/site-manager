@@ -18,7 +18,7 @@ BackupTask.prototype = Object.create(Task.prototype);
 BackupTask.prototype.perform = function*() {
 	var site = this.site;
 	var dataPath = fs.join(site.path, 'data');
-	
+
 	if (!(yield fs.exists(dataPath + '/.git')))
 		yield this.runNested(new InitDataDirectoryTask(site));
 	yield hooks.call('beforeBackup', this, site);
@@ -40,9 +40,9 @@ BackupTask.prototype.perform = function*() {
 	this.doLog('backup id: ' + revision);
 
 	yield this.runNestedQuietly(site.loadTask());
-	
+
 	site.emit('backup');
-	
+
 	return revision;
 };
 
@@ -59,14 +59,14 @@ RestoreTask.prototype = Object.create(Task.prototype);
 RestoreTask.prototype.perform = function*() {
 	var site = this.site;
 	var dataPath = fs.join(site.path, 'data');
-	
+
 	if (!(yield fs.exists(dataPath + '/.git')))
 		yield this.runNested(new InitDataDirectoryTask(site));
 	this.cd(dataPath);
-	
+
 	// To be safe, backup first
 	yield this.runNested(new BackupTask(site, 'pre-restore ' + this.revision));
-	
+
 	// Add a tag so that the old revision can be reached (version-sort lists test.10 after test.9)
 	var lastTag = (yield this.execQuietly('git tag -l "' + site.name + '.*" | sort --version-sort | tail -n 1')).stdout.trim();
 	var lastTagNumber = 0;
@@ -87,11 +87,11 @@ RestoreTask.prototype.perform = function*() {
 
 	yield hooks.call('afterRestore', this, site);
 	yield hooks.call('afterCheckout', this, site);
-	
+
 	this.doLog('Backup restored'.green);
 
 	yield this.runNestedQuietly(site.loadTask());
-	
+
 	site.emit('restore');
 };
 
@@ -116,10 +116,10 @@ InitDataDirectoryTask.prototype.perform = function*() {
 	// root repo
 	var symlinks = [ 'logs/refs/', 'objects/', 'packed-refs', 'refs/' ];
 	var backupRepoPath = site.siteManager.backupRepoPath;
-	
+
 	if (!(yield fs.exists(fs.join(dataPath, '.git/logs'))))
 		yield fs.makeDirectory(fs.join(dataPath, '.git/logs'));
-	
+
 	for (var i = 0; i < symlinks.length; i++) {
 		var name = symlinks[i];
 		var linkPath = fs.join(dataPath, '.git', name);
@@ -136,17 +136,10 @@ exports.getBackups = Q.async(function*(site) {
 	if (!(yield fs.exists(site.path + '/data/.git')))
 		return []; // no data, so no backups
 
-	var currentBackupRevision;
-	try {
-		var result = yield ShellTask.exec('git rev-parse ' + ShellTask.escape('refs/heads/' + site.name),
-				site.path + '/data');
-		currentBackupRevision = result.stdout.trim();
-	} catch(err) {
-		if (typeof err == 'object' && err.code == 128)
-			return []; // the branch does not exist (e.g. unborn)
-		throw err;
-	}
-	
+	var currentBackupRevision = yield exports.getCurrentBackupRevision(site);
+	if (!currentBackupRevision)
+		return [];
+
 	var result = yield ShellTask.exec('git log --tags="' + site.name + '.*" --graph ' +
 			'--pretty=format:"%x09%H%x09%at%x09%P%x09%s" ' + site.name /* match the branch */,
 			site.path + '/data');
@@ -161,7 +154,7 @@ exports.getBackups = Q.async(function*(site) {
 			else
 				return null;
 		}
-		
+
 		return {
 			type: 'backup',
 			prefix: parts[0],
@@ -173,6 +166,18 @@ exports.getBackups = Q.async(function*(site) {
 		};
 	})
 	.filter(function(v) { return v; }); // remove null entries
+});
+
+exports.getCurrentBackupRevision = Q.async(function*(site) {
+	try {
+		var result = yield ShellTask.exec('git rev-parse ' + ShellTask.escape('refs/heads/' + site.name),
+				site.path + '/data');
+		return result.stdout.trim();
+	} catch(err) {
+		if (typeof err == 'object' && err.code == 128)
+			return null; // the branch does not exist (e.g. unborn)
+		throw err;
+	}
 });
 
 exports.getBackup = Q.async(function*(site, revision) {

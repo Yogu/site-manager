@@ -89,7 +89,7 @@ AddSiteTask.prototype.perform = function*() {
 			yield this.exec('git checkout -b "' + siteName + '"');
 		} else {
 			this.doLog('There is a branch in the backup for this site, using it');
-			yield this.exec('git checkout "' + siteName + '"');
+			yield this.exec('git clean -f && git checkout "' + siteName + '"');
 		}
 	}).call(this);
 

@@ -64,6 +64,10 @@ Site.prototype.getBackup = function(revision) {
 	return backups.getBackup(this, revision);
 };
 
+Site.prototype.getCurrentBackupRevision = function() {
+	return backups.getCurrentBackupRevision(this);
+};
+
 Site.prototype.modifyConfig = Q.async(function*(changer) {
 	var sites = yaml.safeLoad(yield fs.read(this.siteManager.path + '/sites.yaml'));
 	var site = sites[this.name];
