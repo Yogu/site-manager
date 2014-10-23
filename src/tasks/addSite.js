@@ -89,7 +89,7 @@ AddSiteTask.prototype.perform = function*() {
 			yield this.exec('git checkout --orphan "' + siteName + '"');
 		} else {
 			this.doLog('There is a branch in the backup for this site, using it');
-			yield this.exec('git clean -f && git checkout "' + siteName + '"');
+			yield this.exec('git clean -df && git checkout "' + siteName + '"');
 		}
 	}).call(this);
 
