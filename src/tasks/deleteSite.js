@@ -4,16 +4,17 @@ var Q = require('q');
 var yaml = require('js-yaml');
 var hooks = require('../hooks.js');
 
-function DeleteSiteTask(site) {
+function DeleteSiteTask(siteManager, site) {
 	Task.call(this);
+	this.siteManager = siteManager;
 	this.site = site;
-	this.name = 'Delete';
+	this.name = 'Delete ' + site.name;
 }
 
 DeleteSiteTask.prototype = Object.create(Task.prototype);
 
 DeleteSiteTask.prototype.perform = function*() {
-	var manager = this.site.siteManager;
+	var manager = this.siteManager;
 	var site = this.site;
 
 	yield hooks.call('beforeDelete', this, site);

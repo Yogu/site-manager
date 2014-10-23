@@ -86,7 +86,7 @@ describe("SiteManager", function() {
 
 			manager.once('load', function() {
 				var site = manager.getSite('test');
-				var task = site.deleteTask();
+				var task = manager.deleteSiteTask(site);
 				site.schedule(task);
 				task.then(function() {
 					return fs.exists(path + '/sites/test');

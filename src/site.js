@@ -53,10 +53,6 @@ Site.prototype.resetTask = function() {
 	return new ResetTask(this);
 };
 
-Site.prototype.deleteTask = function() {
-	return new DeleteSiteTask(this);
-};
-
 Site.prototype.getDB = function() {
 	return databases.connect(this.dbConfig);
 };

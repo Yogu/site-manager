@@ -3,6 +3,7 @@ var Task = require('./task.js');
 var FetchTask = require('./tasks/fetch.js');
 var LoadSiteManagerTask = require('./tasks/loadSiteManager.js');
 var AddSiteTask = require('./tasks/addSite.js');
+var DeleteSiteTask = require('./tasks/deleteSite.js');
 
 // Register common hooks
 require('./hooks/common.js');
@@ -27,6 +28,10 @@ SiteManager.prototype.fetchTask = function() {
 
 SiteManager.prototype.addSiteTask = function(siteName, branch) {
 	return new AddSiteTask(this, siteName, branch);
+};
+
+SiteManager.prototype.deleteSiteTask = function(site) {
+	return new DeleteSiteTask(this, site);
 };
 
 SiteManager.prototype.getSite = function(siteName) {
