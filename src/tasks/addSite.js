@@ -81,7 +81,16 @@ AddSiteTask.prototype.perform = function*() {
 			yield fs.symbolicLink(linkPath, yield fs.relative(gitPath, targetPath), type);
 		}
 
-		yield this.exec('git checkout -b "' + siteName + '"');
+		// make sure real errors (!= 1) are caught
+		var branchMissing = (yield (this.exec('git show-ref --verify --quiet "refs/heads/' + siteName + '" ; ' +
+			'if [ $? -eq 1 ] ; then echo "missing" ; fi'))).stdout.trim() == 'missing';
+		if (branchMissing) {
+			this.doLog('There is no branch in the backup for this site, creating one');
+			yield this.exec('git checkout -b "' + siteName + '"');
+		} else {
+			this.doLog('There is a branch in the backup for this site, using it');
+			yield this.exec('git checkout "' + siteName + '"');
+		}
 	}).call(this);
 
 	this.doLog('Writing new sites.yaml...');
