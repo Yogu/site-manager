@@ -16,6 +16,8 @@ DeleteSiteTask.prototype.perform = function*() {
 	var manager = this.site.siteManager;
 	var site = this.site;
 
+	yield hooks.call('beforeDelete', this, site);
+
 	yield fs.removeTree(site.path);
 
 	yield hooks.call('deletingSite', this, site);

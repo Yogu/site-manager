@@ -1,7 +1,7 @@
 var Q = require('q');
 
 var hookNames = [ 'afterCheckout', 'afterPull', 'beforeBackup', 'afterRestore', 'afterUpgrade',
-	'upgradeFailed', 'afterCreate', 'deletingSite', 'afterDelete' ];
+	'upgradeFailed', 'afterCreate', 'deletingSite', 'afterDelete', 'beforeDelete' ];
 
 var hooks = {};
 for (var i = 0; i < hookNames.length; i++)
