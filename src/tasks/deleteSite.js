@@ -19,6 +19,7 @@ DeleteSiteTask.prototype.perform = function*() {
 
 	yield hooks.call('beforeDelete', this, site);
 
+	this.doLog('Removing ' + site.path + '...');
 	yield fs.removeTree(site.path);
 
 	yield hooks.call('deletingSite', this, site);
