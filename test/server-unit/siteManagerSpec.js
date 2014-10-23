@@ -1,6 +1,7 @@
 var SiteManager = require('../../src/siteManager.js');
 var Site = require('../../src/site.js');
 var resources = require('../utils/resources.js');
+var fs = require('q-io/fs');
 
 describe("SiteManager", function() {
 	it("loads config properly", function(done) {
@@ -68,6 +69,29 @@ describe("SiteManager", function() {
 					var sites = manager.sites.filter(function(s) { return s.name == 'new-site'; });
 					expect(sites.length).toBeGreaterThan(0);
 					return sites[0].loaded;
+				})
+				.catch(function(err) { this.fail(err); }.bind(this))
+				.then(done);
+			}.bind(this));
+		}.bind(this));
+	}, 5000);
+
+	it("can delete sites", function(done) {
+		resources.use(function(path) {
+			path += '/site-collection';
+			var manager = new SiteManager(path);
+
+			manager.on('fail', function(task, error) { this.fail(error); done(); }.bind(this));
+			manager.schedule(manager.loadTask());
+
+			manager.once('load', function() {
+				var site = manager.getSite('test');
+				var task = site.deleteTask();
+				site.schedule(task);
+				task.then(function() {
+					return fs.exists(path + '/sites/test');
+				}).then(function(pathExists) {
+					expect(pathExists).toBe(false);
 				})
 				.catch(function(err) { this.fail(err); }.bind(this))
 				.then(done);

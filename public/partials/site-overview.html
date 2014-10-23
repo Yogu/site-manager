@@ -23,7 +23,8 @@
 		<dd><a href="#/sites/{{site.name}}/backups">backups</a></dd>
 		<dd>
 			<button ng-if="site.canUpgrade" class="btn btn-success" ng-click="upgrade()">Upgrade {{site.behindBy}} commit(s)</button>
-			<button class="btn btn-danger" ng-click="reset()">Reset (Delete all data)</button>
+			<button class="btn btn-danger" ng-click="reset()">Reset</button>
+			<button class="btn btn-danger" ng-click="delete()">Delete</button>
 		</dd>
 	</dl>
 </div>

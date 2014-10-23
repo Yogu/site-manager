@@ -23,13 +23,13 @@ exports.start = function(port, dir) {
 	app.use(bodyParser.json());
 	var io = socketio.listen(server);
 	io.set('log level', 2 /* do not log debug messages */);
-	
+
 	var controller = new Controller(dir);
-	
+
 	server.listen(port, function() {
 		console.log('server started on port ' + port + ' for root dir ' + dir);
 	});
-	
+
 	app.get('/api/sites', function(req, res) {
 		controller.getSites().then(function(sites) {
 			res.json(objects.extract( { sites: sites }, {'sites[]': {'*': true, dbConfig: '*'} } ));
@@ -38,29 +38,29 @@ exports.start = function(port, dir) {
 			res.send(500);
 		});
 	});
-	
+
 	app.post('/api/sites', function(req, res) {
 		req.checkBody('siteName').isIdentifier();
 		req.checkBody('branch').isIdentifier();
 		var errors = req.validationErrors();
 		if (errors)
 			return res.send('Validation errors: ' + JSON.stringify(errors), 400);
-		
+
 		var task = controller.manager.addSiteTask(req.body.siteName, req.body.branch);
 		controller.manager.schedule(task);
 		res.json({taskID: task.id});
 	});
-	
+
 	app.post('/api/reload', function(req, res) {
 		controller.reload();
 		res.send(202 /* accepted */);
 	});
-	
+
 	app.post('/api/fetch', function(req, res) {
 		controller.manager.schedule(controller.manager.fetchTask());
 		res.send(202 /* accepted */);
 	});
-	
+
 	app.post('/api/sites/:site/upgrade', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {
@@ -72,7 +72,7 @@ exports.start = function(port, dir) {
 			res.send(500);
 		});
 	});
-	
+
 	app.post('/api/sites/:site/backups', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {
@@ -86,7 +86,7 @@ exports.start = function(port, dir) {
 			res.send(500);
 		});
 	});
-	
+
 	app.post('/api/sites/:site/reset', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {
@@ -98,7 +98,19 @@ exports.start = function(port, dir) {
 			res.send(500);
 		});
 	});
-	
+
+	app.delete('/api/sites/:site', function(req, res) {
+		controller.getSite(req.params.site)
+		.then(function(site) {
+			site.schedule(site.deleteTask());
+			res.send(202 /* accepted */);
+		})
+		.catch(function(e) {
+			console.error(e.stack);
+			res.send(500);
+		});
+	});
+
 	app.get('/api/sites/:site/backups', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {
@@ -138,7 +150,7 @@ exports.start = function(port, dir) {
 				res.send(500);
 			});
 	});
-	
+
 	app.get('/api/tasks', function(req, res) {
 		controller.manager.getTasks(0, 20)
 		.then(function(tasks) {
@@ -149,7 +161,7 @@ exports.start = function(port, dir) {
 			res.send(500);
 		});
 	});
-	
+
 	app.get('/api/sites/:site/tasks', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {
@@ -163,7 +175,7 @@ exports.start = function(port, dir) {
 			res.send(500);
 		});
 	});
-	
+
 	app.get('/api/sites/:site/tasks/:id', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {
@@ -177,7 +189,7 @@ exports.start = function(port, dir) {
 			res.send(500);
 		});
 	});
-	
+
 	app.get('/api/tasks/:id', function(req, res) {
 		controller.manager.getTask(req.params.id)
 		.then(function(task) {
@@ -188,33 +200,33 @@ exports.start = function(port, dir) {
 			res.send(500);
 		});
 	});
-	
+
 	controller.on('task:schedule', function(task) {
 		var context = task.context;
 		task = objects.extract(task, '*');
 		task.site = context.name || null; // site name, if not site manager
 		io.sockets.emit('task:schedule', task);
 	});
-	
+
 	controller.on('task:status', function(task) {
 		io.sockets.emit('task:status', task.id, task.status);
 	});
-	
+
 	controller.on('task:log', function(task, message) {
 		io.sockets.emit('task:log', task.id, message);
 	});
-	
+
 	controller.on('site:load', function(site) {
 		io.sockets.emit('site:load', site.name, objects.extract(site, '*'));
 	});
-	
+
 	controller.on('site:backups', function(site) {
 		io.sockets.emit('site:backups', site.name);
 	});
-	
+
 	controller.on('manager:load', function(sites) {
 		io.sockets.emit('manager:load');
 	});
-	
+
 	return server;
 };

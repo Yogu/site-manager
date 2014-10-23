@@ -6,6 +6,7 @@ var backups = require('./tasks/backup.js');
 var BackupTask = backups.BackupTask;
 var RestoreTask = backups.RestoreTask;
 var ResetTask = require('./tasks/reset.js');
+var DeleteSiteTask = require('./tasks/deleteSite.js');
 var databases = require('./databases');
 var Q = require('q');
 var fs = require('q-io/fs');
@@ -50,6 +51,10 @@ Site.prototype.restoreTask = function(revision) {
 
 Site.prototype.resetTask = function() {
 	return new ResetTask(this);
+};
+
+Site.prototype.deleteTask = function() {
+	return new DeleteSiteTask(this);
 };
 
 Site.prototype.getDB = function() {

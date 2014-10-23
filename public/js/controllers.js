@@ -5,7 +5,7 @@ define([ 'angular', 'model' ], function(angular) {
 		.controller('SiteNavCtrl', [ '$scope', 'model', function($scope, model) {
 			$scope.sites = model.sites;
 		} ])
-		
+
 		.controller('TaskAlertsCtrl', [ '$scope', 'model', function($scope, model) {
 			$scope.tasks = model.tasks;
 			$scope.hide = function(task) {
@@ -13,13 +13,13 @@ define([ 'angular', 'model' ], function(angular) {
 			};
 			$scope.isVisible = function(task) { return !task.alertIsHidden; };
 		} ])
-		
+
 		.controller('SiteListCtrl', [ '$scope', 'model', function($scope, model) {
 			$scope.sites = model.sites;
 			$scope.reload = model.reload.bind(model);
 			$scope.fetch = model.fetch.bind(model);
 		} ])
-		
+
 		.controller('AddSiteCtrl', [ '$scope', '$location', 'model', function($scope, $location, model) {
 			$scope.addSite = function() {
 				model.addSite($scope.siteName, $scope.branch)
@@ -32,7 +32,7 @@ define([ 'angular', 'model' ], function(angular) {
 				});
 			};
 		} ])
-		
+
 		.controller('SiteOverviewCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
 			model.getSite($routeParams.site).then(function(site) {
 				$scope.site = site;
@@ -44,7 +44,7 @@ define([ 'angular', 'model' ], function(angular) {
 					return 'error: ahead by ' + site.aheadBy + ' commits';
 				if (!site.isClean)
 					return 'error: uncommitted changes';
-				if (site.behindBy == 0)
+				if (site.behindBy === 0)
 					return 'up to date';
 				return 'upgrade available (' + site.behindBy + ' commits), to ' + site.upstreamRevision;
 			};
@@ -52,7 +52,17 @@ define([ 'angular', 'model' ], function(angular) {
 				model.upgrade($scope.site);
 			};
 			$scope.reset = function() {
+				if (!confirm('Do you really want to RESET the site ' + $scope.site.name + ', removing all its data? A backup will be created.'))
+					return;
+
 				model.reset($scope.site);
+			};
+			$scope.delete = function() {
+				if (!confirm('Do you really want to DELETE the site ' + $scope.site.name + '? The backups will be kept.'))
+					return;
+
+				model.deleteSite($scope.site);
+				$location.path('/');
 			};
 		} ])
 
@@ -91,7 +101,7 @@ define([ 'angular', 'model' ], function(angular) {
 					};
 				});
 		} ])
-		
+
 		.controller('SiteTasksCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
 			model.getSite($routeParams.site)
 			.then(function(site) {
@@ -102,21 +112,21 @@ define([ 'angular', 'model' ], function(angular) {
 				$scope.tasks = tasks;
 			});
 		} ])
-		
+
 		.controller('GlobalTasksCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
 			model.getGlobalTasks()
 			.then(function(tasks) {
 				$scope.tasks = tasks;
 			});
 		} ])
-		
+
 		.controller('GlobalTaskCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
 			model.getTask(null, $routeParams.id)
 			.then(function(task) {
 				$scope.task = task;
 			});
 		} ])
-		
+
 		.controller('SiteTaskCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
 			model.getSite($routeParams.site)
 			.then(function(site) {
