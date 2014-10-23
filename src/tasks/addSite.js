@@ -85,8 +85,8 @@ AddSiteTask.prototype.perform = function*() {
 		var branchMissing = (yield (this.exec('git show-ref --verify --quiet "refs/heads/' + siteName + '" ; ' +
 			'if [ $? -eq 1 ] ; then echo "missing" ; fi'))).stdout.trim() == 'missing';
 		if (branchMissing) {
-			this.doLog('There is no branch in the backup for this site, creating one');
-			yield this.exec('git checkout -b "' + siteName + '"');
+			this.doLog('There is no branch in the backup for this site, creating an orphan branch');
+			yield this.exec('git checkout --orphan "' + siteName + '"');
 		} else {
 			this.doLog('There is a branch in the backup for this site, using it');
 			yield this.exec('git clean -f && git checkout "' + siteName + '"');
