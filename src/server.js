@@ -102,7 +102,7 @@ exports.start = function(port, dir) {
 	app.delete('/api/sites/:site', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {
-			controller.manager.schedule(controller.manager.deleteTask(site));
+			controller.manager.schedule(controller.manager.deleteSiteTask(site));
 			res.send(202 /* accepted */);
 		})
 		.catch(function(e) {

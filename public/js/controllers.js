@@ -33,7 +33,7 @@ define([ 'angular', 'model' ], function(angular) {
 			};
 		} ])
 
-		.controller('SiteOverviewCtrl', [ '$scope', '$routeParams', 'model', function($scope, $routeParams, model) {
+		.controller('SiteOverviewCtrl', [ '$scope', '$routeParams', '$location', 'model', function($scope, $routeParams, $location,model) {
 			model.getSite($routeParams.site).then(function(site) {
 				$scope.site = site;
 			});
