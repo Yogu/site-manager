@@ -81,7 +81,7 @@ AddSiteTask.prototype.perform = function*() {
 			yield fs.symbolicLink(linkPath, yield fs.relative(gitPath, targetPath), type);
 		}
 
-		this.exec('git checkout -b "' + siteName + '"');
+		yield this.exec('git checkout -b "' + siteName + '"');
 	}).call(this);
 
 	this.doLog('Writing new sites.yaml...');
