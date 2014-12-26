@@ -19,12 +19,12 @@ LoadSiteManagerTask.prototype.perform = function*() {
 	this.doLog('Loading config.yaml...');
 	var data = yield fs.read(manager.path + '/config.yaml');
 	var config = yaml.safeLoad(data);
-			
+
 	if (config.siteRoot)
 		manager._siteRoot = path.resolve(manager.path, config.siteRoot);
 	else
 		manager._siteRoot = manager.path;
-	
+
 	if (config.logRoot)
 		manager._logRoot = path.resolve(manager.path, config.logRoot);
 	else
@@ -40,7 +40,7 @@ LoadSiteManagerTask.prototype.perform = function*() {
 		manager.backupRepoPath = path.resolve(manager.path, config.backupRepo);
 	else
 		manager.backupRepoPath = path.resolve(manager.path, 'backups.git');
-	
+
 	if (config.db)
 		var baseDBConfig = config.db;
 	else
@@ -52,12 +52,12 @@ LoadSiteManagerTask.prototype.perform = function*() {
 	manager.config = config;
 
 	var sites = yaml.safeLoad(yield fs.read(manager.path + '/sites.yaml'));
-		
+
 	var newSites = [];
 	for (var name in sites) {
 		var siteConfig = sites[name] || {};
 		var sitePath = path.resolve(manager._siteRoot, siteConfig.root ? siteConfig.root : name);
-			
+
 		var existingSites = manager.sites.filter( function(s) { return s.name == name; } );
 		var site;
 		if (existingSites.length > 0) {
@@ -68,7 +68,7 @@ LoadSiteManagerTask.prototype.perform = function*() {
 			site.siteManager = manager;
 			manager.emit('siteAdded', site);
 		}
-		
+
 		if (siteConfig.db)
 			site.dbConfig = extend(siteConfig.db, baseDBConfig);
 		else
@@ -78,7 +78,8 @@ LoadSiteManagerTask.prototype.perform = function*() {
 
 		site.watchers = globalWatchers.concat(siteConfig.watchers || []);
 		site.ownURL = manager.ownURL + '#/sites/' + site.name;
-		
+		site.stagingOf = siteConfig.stagingOf;
+
 		if (this.loadSites || existingSites.length == 0 /* always load new sites */)
 			site.schedule(site.loadTask());
 		newSites.push(site);

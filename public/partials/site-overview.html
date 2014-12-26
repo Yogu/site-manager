@@ -18,6 +18,8 @@
 			<div ng-switch-when="mysql">MySQL (db: <strong>{{site.dbConfig.database}}</strong>,
 			 host: {{site.dbConfig.host}}, user: {{site.dbConfig.user}})</div>
 		</dd>
+		<dt ng-if="site.stagingOf">Staging:</dt>
+		<dd ng-if="site.stagingOf">This is the staging site of <a href="#/sites/{{site.stagingOf}}">{{site.stagingOf}}</a>.</dd>
 		<dt>Links:</dt>
 		<dd><a href="#/sites/{{site.name}}/tasks">tasks</a></dd>
 		<dd><a href="#/sites/{{site.name}}/backups">backups</a></dd>

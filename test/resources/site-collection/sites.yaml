@@ -6,6 +6,15 @@ test:
     path: ../db/test.sqlite # only for sqlite, relative to this file
 
 dev:
-    
+
 feature-x:
   root: ../feature-x-site # optional, specifies path to repo relative to siteRoot
+
+production:
+  db:
+    path: ../db/production.sqlite
+
+staging:
+  db:
+    path: ../db/staging.sqlite
+  stagingOf: production
