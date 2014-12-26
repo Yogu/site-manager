@@ -14,16 +14,25 @@ LoadSiteTask.prototype = Object.create(Task.prototype);
 LoadSiteTask.prototype.perform = function*() {
 	try {
 		this.cd(this.site.path);
-		
+
 		yield this.exec("git fetch");
-		
+
 		this.site.revision = (yield this.exec("git rev-parse HEAD")).stdout.trim();
 		this.site.branch = (yield this.exec("git rev-parse --abbrev-ref HEAD")).stdout.trim();
-		this.site.upstreamRevision = (yield this.exec("git rev-parse origin/" + this.site.branch)).stdout.trim();
-		this.site.aheadBy = yield this._getCommitCountBetween('origin/' + this.site.branch, this.site.branch);
-		this.site.behindBy = yield this._getCommitCountBetween(this.site.branch, 'origin/' + this.site.branch);
+		if (this.site.branch == 'HEAD') {
+			this.site.branch = ''; // this happens when no branch is checked out
+		}
+		if (this.site.branch) {
+			this.site.upstreamRevision = (yield this.exec("git rev-parse origin/" + this.site.branch)).stdout.trim();
+			this.site.aheadBy = yield this._getCommitCountBetween('origin/' + this.site.branch, this.site.branch);
+			this.site.behindBy = yield this._getCommitCountBetween(this.site.branch, 'origin/' + this.site.branch);
+		} else {
+			this.site.upstreamRevision = '';
+			this.site.aheadBy = 0;
+			this.site.behindBy = 0;
+		}
 		this.site.isClean = yield this._isClean();
-		
+
 		this.site.canUpgrade = this.site.aheadBy == 0 && this.site.isClean && this.site.behindBy > 0;
 		this.site.isLoaded = true;
 		this.site.emit('load');

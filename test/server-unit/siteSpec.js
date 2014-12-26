@@ -1,6 +1,7 @@
 var Site = require('../../src/site.js');
 var path = require('path');
 var resources = require('../utils/resources.js');
+var exec = require('child_process').exec;
 
 var resourcesPath = path.resolve(__dirname, 'resources');
 
@@ -24,6 +25,37 @@ describe("Site", function() {
 			})
 			.catch(function(err) { this.fail(err); }.bind(this))
 			.then(done);
+		}.bind(this));
+	}, 5000);
+
+	it("can not upgrade when no branch is checked out", function(done) {
+		resources.use(function(resourcesPath) {
+			var sitePath = path.resolve(resourcesPath, 'site-collection/sites/test');
+			exec('git checkout 0c3ba58efb54b70c53cc49a24a160bfcc5680c82', {
+				cwd: sitePath
+			}, function(error) {
+				if (error) {
+					this.fail(error);
+				}
+
+				var site = new Site("test", sitePath);
+				var task = site.loadTask();
+				// task.on('log', console.log.bind(console)); // for debugging
+				site.schedule(task);
+				task.then(function() {
+					expect(site.isLoaded).toBe(true);
+					expect(site.isLoadFailed).toBe(false);
+					expect(site.isClean).toBe(true);
+					expect(site.revision).toBe('0c3ba58efb54b70c53cc49a24a160bfcc5680c82');
+					expect(site.upstreamRevision).toBe('');
+					expect(site.branch).toBe('');
+					expect(site.aheadBy).toBe(0);
+					expect(site.behindBy).toBe(0);
+					expect(site.canUpgrade).toBe(false);
+				})
+				.catch(function(err) { this.fail(err); }.bind(this))
+				.then(done);
+			}.bind(this));
 		}.bind(this));
 	}, 5000);
 
