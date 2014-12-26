@@ -53,6 +53,10 @@ define(['angular', 'socket'], function(angular) {
 				$http.post('api/sites/'  + site.name + '/backups/' + backup.revision + '/restore');
 			},
 
+			resetStaging: function(site) {
+				$http.post('api/sites/'  + site.name + '/reset-staging');
+			},
+
 			getSite: function(name) {
 				// if there is a reload in progress, wait until that finished as it may add a new site
 				return reloaded.then(function() {

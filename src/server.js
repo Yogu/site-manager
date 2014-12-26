@@ -99,6 +99,18 @@ exports.start = function(port, dir) {
 		});
 	});
 
+	app.post('/api/sites/:site/reset-staging', function(req, res) {
+		controller.getSite(req.params.site)
+		.then(function(site) {
+			site.schedule(site.resetStagingTask());
+			res.send(202 /* accepted */);
+		})
+		.catch(function(e) {
+			console.error(e.stack);
+			res.send(500);
+		});
+	});
+
 	app.delete('/api/sites/:site', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {

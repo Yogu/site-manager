@@ -57,6 +57,9 @@ define([ 'angular', 'model' ], function(angular) {
 
 				model.reset($scope.site);
 			};
+			$scope.resetStaging = function() {
+				model.resetStaging($scope.site);
+			};
 			$scope.delete = function() {
 				if (!confirm('Do you really want to DELETE the site ' + $scope.site.name + '? The backups will be kept.'))
 					return;
