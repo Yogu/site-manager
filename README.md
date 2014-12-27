@@ -7,14 +7,12 @@ You want to develop, test and deploy a website reliably, automating as much as p
 
 #### Features
 
-**Important notice: These are the planned feature, the application is in a very early development state.**
-
 **site-manager**
 
 * manages multiple instances of your website, e.g. **dev, alpha, beta, staging** and **production**
 * upgrades sites automatically when you push to certain branches
-* migrates databasees during upgrade
-* creates scheduled backups, and before upgrades
+* migrates databases during upgrade
+* creates backups before performing critical operations
 * makes sure that tasks do not interfere
 * logs every past task
 
@@ -22,6 +20,11 @@ You want to develop, test and deploy a website reliably, automating as much as p
 
 * You use git with branches for development, production etc.
 * All website roots are on the same server or accessible via NFS
+
+#### Customization
+
+This app is intended to be included as a node package into your main application.
+You can add custom tasks to adapt it to your workflow.
 
 #### Technology
 
