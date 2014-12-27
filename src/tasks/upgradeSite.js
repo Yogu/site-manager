@@ -27,6 +27,12 @@ UpgradeSiteTask.prototype.perform = function*() {
 
 	var oldRevision = site.revision;
 	try {
+		if (this.site.stagingOf) {
+			this.doLog('This is a staging site, resetting to ' + this.site.stagingOf + '...');
+			// TODO this makes a second, unneccessary backup before the restore
+			yield this.runNested(site.resetStagingTask());
+		}
+
 		this.doLog('Pulling incoming commits...');
 		yield this.exec('git pull --ff-only');
 
