@@ -4,11 +4,13 @@ var fs = require('q-io/fs');
 
 /**
  * Resets a staging site to its production site by restoring a backup of production
+ * @option backup set to false to skip the backup before restore
  */
-function ResetStagingTask(site) {
+function ResetStagingTask(site, options) {
 	Task.call(this);
 	this.site = site;
 	this.name = 'Reset to ' + site.stagingOf;
+	this.options = options || {};
 }
 
 ResetStagingTask.prototype = Object.create(Task.prototype);
@@ -31,7 +33,8 @@ ResetStagingTask.prototype.perform = function*() {
 	this.doLog('Waiting for backup of ' + site.stagingOf + ' to complete...');
 	var backupRevision = yield backupTask;
 	this.doLog('Backup completed with revision ' + backupRevision + ', restoring that...');
-	yield this.runNested(site.restoreTask(backupRevision));
+	// pass the skip-backup option
+	yield this.runNested(site.restoreTask(backupRevision, { backup: this.options.backup }));
 };
 
 module.exports = ResetStagingTask;

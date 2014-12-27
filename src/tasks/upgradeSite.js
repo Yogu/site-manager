@@ -29,8 +29,8 @@ UpgradeSiteTask.prototype.perform = function*() {
 	try {
 		if (this.site.stagingOf) {
 			this.doLog('This is a staging site, resetting to ' + this.site.stagingOf + '...');
-			// TODO this makes a second, unneccessary backup before the restore
-			yield this.runNested(site.resetStagingTask());
+			// skip the backup pre-restore because we already made a backup
+			yield this.runNested(site.resetStagingTask( { backup: false }));
 		}
 
 		this.doLog('Pulling incoming commits...');

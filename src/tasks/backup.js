@@ -6,11 +6,15 @@ var hooks = require('../hooks.js');
 var yaml = require('js-yaml');
 require('colors');
 
-function BackupTask(site, message) {
+/**
+  * Makes a backup of this site
+	*/
+function BackupTask(site, message, options) {
 	Task.call(this);
 	this.site = site;
 	this.name = 'Backup (' + message + ')';
 	this.message = message;
+	this.options = options || {};
 }
 
 BackupTask.prototype = Object.create(Task.prototype);
@@ -46,12 +50,17 @@ BackupTask.prototype.perform = function*() {
 	return revision;
 };
 
-
-function RestoreTask(site, revision) {
+/**
+ * Restores a backup
+ * @param revision the revision of the backup to restore
+ * @option backup set to false to skip the backup before restore
+ */
+function RestoreTask(site, revision, options) {
 	Task.call(this);
 	this.site = site;
 	this.name = 'Restore backup ' + revision;
 	this.revision = revision;
+	this.options = options || {};
 }
 
 RestoreTask.prototype = Object.create(Task.prototype);
@@ -65,7 +74,11 @@ RestoreTask.prototype.perform = function*() {
 	this.cd(dataPath);
 
 	// To be safe, backup first
-	yield this.runNested(new BackupTask(site, 'pre-restore ' + this.revision));
+	if (this.options.backup !== false) {
+		yield this.runNested(new BackupTask(site, 'pre-restore ' + this.revision));
+	} else {
+		this.doLog('Skipping pre-restore backup');
+	}
 
 	// Add a tag so that the old revision can be reached (version-sort lists test.10 after test.9)
 	var lastTag = (yield this.execQuietly('git tag -l "' + site.name + '.*" | sort --version-sort | tail -n 1')).stdout.trim();

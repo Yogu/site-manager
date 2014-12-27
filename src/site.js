@@ -46,16 +46,16 @@ Site.prototype.backupTask = function(message) {
 	return new BackupTask(this, message);
 };
 
-Site.prototype.restoreTask = function(revision) {
-	return new RestoreTask(this, revision);
+Site.prototype.restoreTask = function(revision, options) {
+	return new RestoreTask(this, revision, options);
 };
 
 Site.prototype.resetTask = function() {
 	return new ResetTask(this);
 };
 
-Site.prototype.resetStagingTask = function() {
-	return new ResetStagingTask(this);
+Site.prototype.resetStagingTask = function(options) {
+	return new ResetStagingTask(this, options);
 };
 
 Site.prototype.getDB = function() {
