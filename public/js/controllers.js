@@ -66,7 +66,7 @@ define([ 'angular', 'model' ], function(angular) {
 				model.resetStaging($scope.site);
 			};
 			$scope.upgradeToStaging = function() {
-				if (!confirm('Do you want to upgrade the site ' + $scope.stagingOf + ' to the revision of this staging site?')) {
+				if (!confirm('Do you want to upgrade the site ' + $scope.site.stagingOf + ' to the revision of this staging site?')) {
 					return;
 				}
 
