@@ -36,6 +36,11 @@ define([ 'angular', 'model' ], function(angular) {
 		.controller('SiteOverviewCtrl', [ '$scope', '$routeParams', '$location', 'model', function($scope, $routeParams, $location,model) {
 			model.getSite($routeParams.site).then(function(site) {
 				$scope.site = site;
+				if ($scope.site.stagingOf) {
+					model.getSite(site.stagingOf).then(function(s) {
+						$scope.stagingOfSite = s;
+					});
+				}
 			});
 			$scope.status = function(site) {
 				if (!site.branch)
@@ -59,6 +64,13 @@ define([ 'angular', 'model' ], function(angular) {
 			};
 			$scope.resetStaging = function() {
 				model.resetStaging($scope.site);
+			};
+			$scope.upgradeToStaging = function() {
+				if (!confirm('Do you want to upgrade the site ' + $scope.stagingOf + ' to the revision of this staging site?')) {
+					return;
+				}
+
+				model.upgradeToRevision($scope.stagingOfSite, $scope.site.revision);
 			};
 			$scope.delete = function() {
 				if (!confirm('Do you really want to DELETE the site ' + $scope.site.name + '? The backups will be kept.'))

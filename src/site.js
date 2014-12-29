@@ -8,6 +8,7 @@ var RestoreTask = backups.RestoreTask;
 var ResetTask = require('./tasks/reset.js');
 var DeleteSiteTask = require('./tasks/deleteSite.js');
 var ResetStagingTask = require('./tasks/resetStaging.js');
+var UpgradeToRevisionTask = require('./tasks/upgradeToRevision.js');
 var databases = require('./databases');
 var Q = require('q');
 var fs = require('q-io/fs');
@@ -40,6 +41,10 @@ Site.prototype.loadTask = function() {
 
 Site.prototype.upgradeTask = function() {
 	return new UpgradeSiteTask(this);
+};
+
+Site.prototype.upgradeToRevisionTask = function(revision) {
+	return new UpgradeToRevisionTask(this, revision);
 };
 
 Site.prototype.backupTask = function(message) {

@@ -26,6 +26,7 @@
 		<dd>
 			<button ng-if="site.canUpgrade" class="btn btn-success" ng-click="upgrade()">Upgrade {{site.behindBy}} commit(s)</button>
 			<button ng-if="site.stagingOf" class="btn" ng-click="resetStaging()">Reset to {{site.stagingOf}}</button>
+			<button ng-if="stagingOfSite && stagingOfSite.revision != site.revision" class="btn btn-success" ng-click="upgradeToStaging()">Upgrade {{site.stagingOf}}</button>
 			<button class="btn btn-danger" ng-click="reset()">Reset Data Base</button>
 			<button class="btn btn-danger" ng-click="delete()">Delete</button>
 		</dd>

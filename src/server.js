@@ -73,6 +73,23 @@ exports.start = function(port, dir) {
 		});
 	});
 
+	app.post('/api/sites/:site/upgrade/:revision', function(req, res) {
+		var revision = req.params.revision;
+		if (revision.match(/^[a-f0-9]+$/) === null) {
+			res.send(400);
+			return;
+		}
+		controller.getSite(req.params.site)
+			.then(function(site) {
+				site.schedule(site.upgradeToRevisionTask(revision));
+				res.send(200 /* accepted */);
+			})
+			.catch(function(e) {
+				console.error(e.stack);
+				res.send(500);
+			});
+	});
+
 	app.post('/api/sites/:site/backups', function(req, res) {
 		controller.getSite(req.params.site)
 		.then(function(site) {

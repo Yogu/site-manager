@@ -57,6 +57,10 @@ define(['angular', 'socket'], function(angular) {
 				$http.post('api/sites/'  + site.name + '/reset-staging');
 			},
 
+			upgradeToRevision: function(site, revision) {
+				$http.post('api/sites/'  + site.name + '/upgrade/' + revision);
+			},
+
 			getSite: function(name) {
 				// if there is a reload in progress, wait until that finished as it may add a new site
 				return reloaded.then(function() {
