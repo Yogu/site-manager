@@ -32,7 +32,12 @@ exports.start = function(port, dir) {
 
 	app.get('/api/sites', function(req, res) {
 		controller.getSites().then(function(sites) {
-			res.json(objects.extract( { sites: sites }, {'sites[]': {'*': true, dbConfig: '*'} } ));
+			res.json(objects.extract( { sites: sites }, {
+				'sites[]': {
+					'*': true,
+					dbConfig: [ 'type', 'host', 'user', 'database', 'path' ]
+				}
+			}));
 		}).catch(function(e) {
 			console.error(e.stack);
 			res.send(500);
