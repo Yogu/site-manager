@@ -36,3 +36,7 @@ node_modules
 
 # Bower
 public/bower_components
+
+# intellij
+.idea/
+*.iml
