@@ -38,6 +38,7 @@ BackupTask.prototype.perform = function*() {
 	this.cd(dataPath);
 	yield this.exec('git add -A');
 	yield this.exec('git commit --allow-empty -m ' + ShellTask.escape(this.message));
+	yield pushIfRemoteExists(this, dataPath, "refs/heads/" + site.name);
 
 	var revision = (yield this.execQuietly("git rev-parse HEAD")).stdout.trim();
 	this.doLog('Backup succeeded'.green);
@@ -88,7 +89,9 @@ RestoreTask.prototype.perform = function*() {
 		if (isNaN(lastTagNumber))
 			lastTagNumber = 0;
 	}
-	yield this.execQuietly('git tag ' + site.name + '.' + (lastTagNumber + 1));
+	var tagName = site.name + '.' + (lastTagNumber + 1);
+	yield this.execQuietly('git tag ' + tagName);
+	yield pushIfRemoteExists(this, dataPath, "refs/tags/" + tagName);
 
 	this.doLog('Restoring data directory...');
 	yield this.exec('git reset --hard ' + ShellTask.escape(this.revision));
@@ -219,6 +222,12 @@ exports.getBackup = Q.async(function*(site, revision) {
 	backup.siteRevision = info.revision;
 
 	return backup;
+});
+
+var pushIfRemoteExists = Q.async(function*(task, path, committish) {
+	// force push because when restoring, the branch is reset
+	task.exec("if [ `git remote | wc -l` -gt 0 ] ; then git push origin -f " + committish + ":" + committish + " ; fi");
+
 });
 
 exports.BackupTask = BackupTask;
