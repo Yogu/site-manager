@@ -226,8 +226,7 @@ exports.getBackup = Q.async(function*(site, revision) {
 
 var pushIfRemoteExists = Q.async(function*(task, path, committish) {
 	// force push because when restoring, the branch is reset
-	task.exec("if [ `git remote | wc -l` -gt 0 ] ; then git push origin -f " + committish + ":" + committish + " ; fi", path);
-
+	yield task.exec("if [ `git remote | wc -l` -gt 0 ] ; then git push origin -f " + committish + ":" + committish + " ; fi", path);
 });
 
 exports.BackupTask = BackupTask;
