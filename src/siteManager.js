@@ -4,6 +4,7 @@ var FetchTask = require('./tasks/fetch.js');
 var LoadSiteManagerTask = require('./tasks/loadSiteManager.js');
 var AddSiteTask = require('./tasks/addSite.js');
 var DeleteSiteTask = require('./tasks/deleteSite.js');
+var Config = require('./config.js');
 
 // Register common hooks
 require('./hooks/common.js');
@@ -12,6 +13,7 @@ function SiteManager(path) {
 	PersistentTaskContext.call(this);
 	this.path = path;
 	this.sites = [];
+	this.properties = new Config(path + '/properties.json')
 }
 
 SiteManager.prototype = Object.create(PersistentTaskContext.prototype);
