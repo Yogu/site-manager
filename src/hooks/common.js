@@ -1,13 +1,8 @@
 var hooks = require('../hooks.js');
-var MigrateTask = require('../tasks/migrate.js');
 var Task = require('../task.js');
 var fs = require('q-io/fs');
 require('colors');
 var MailTask = require('../tasks/mail.js');
-
-hooks.register('afterPull', function(site) {
-	return new MigrateTask(site);
-});
 
 hooks.register('beforeBackup', function(site) {
 	return new Task('Dump Data Base', function*() {
@@ -16,7 +11,7 @@ hooks.register('beforeBackup', function(site) {
 			this.doLog('This site does not have a data base');
 			return;
 		}
-		
+
 		var path = site.path + '/data/database.sql';
 		yield db.dump(path);
 	});
