@@ -43,8 +43,12 @@ exports.connect = Q.async(function*(options) {
 			yield this.clear();
 
 			// restore backup
-			var backup = yield fs.read(path);
-			yield Q.ninvoke(connection, 'query',  backup);
+			// use mysql cli utility to specify max_allowed_packet (for big backups)
+			return ShellTask.exec("mysql --max_allowed_packet=100M " +
+				"-u " + ShellTask.escape(options.user) + " " +
+				ShellTask.escape("--password=" + options.password) + " " +
+				ShellTask.escape("--host=" + options.host) + " " +
+				ShellTask.escape(options.database) + " < " + ShellTask.escape(path));
 		}),
 		
 		clear: Q.async(function*() {
