@@ -5,11 +5,12 @@ var hooks = require('../hooks.js');
 /**
  * Upgrades a site to a specific revision
  */
-function UpgradeToRevisionTask(site, revision) {
+function UpgradeToRevisionTask(site, revision, allowNonFastForward) {
 	Task.call(this);
 	this.site = site;
 	this.name = 'Upgrade to ' + revision;
 	this.revision = revision;
+	this.allowNonFastForward = allowNonFastForward;
 }
 
 UpgradeToRevisionTask.prototype = Object.create(Task.prototype);
@@ -23,11 +24,12 @@ UpgradeToRevisionTask.prototype.perform = function*() {
 	var commitsAhead = yield countCommitsBetween(this, 'HEAD', this.revision);
 	var commitsBehind = yield countCommitsBetween(this, this.revision, 'HEAD');
 
-	if (commitsBehind > 0) {
+	if (commitsBehind > 0 && !this.allowNonFastForward) {
 		throw new Error('The upgrade is not fast-forward, this site is ' +
 			commitsBehind + ' commits ahead of ' + this.revision + '. To go back to ' +
 			'an older version, either restore a backup or do a git revert.');
 	}
+	var needToMerge = commitsBehind > 0;
 
 	if (commitsAhead == 0) {
 		this.doLog('Already up-to-date.');
@@ -40,8 +42,13 @@ UpgradeToRevisionTask.prototype.perform = function*() {
 
 	var oldRevision = site.revision;
 	try {
-		this.doLog('Checking ot new revision...');
-		yield this.exec('git checkout ' + this.revision);
+		if (needToMerge) {
+			this.doLog('Merging new revision...');
+			yield this.exec('git merge ' + this.revision);
+		} else {
+			this.doLog('Checking out new revision...');
+			yield this.exec('git checkout ' + this.revision);
+		}
 		yield this.runNestedQuietly(site.loadTask());
 
 		yield hooks.call('afterPull', this, site);

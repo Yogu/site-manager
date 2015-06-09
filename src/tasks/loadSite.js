@@ -18,11 +18,20 @@ LoadSiteTask.prototype.perform = function*() {
 		yield this.exec("git fetch");
 
 		this.site.revision = (yield this.exec("git rev-parse HEAD")).stdout.trim();
-		this.site.branch = (yield this.exec("git rev-parse --abbrev-ref HEAD")).stdout.trim();
+		if (this.site.isMergeRequestSite) {
+			// this site should be upgraded when sourceBranch changes
+			this.site.branch = this.site.sourceBranch;
+		} else {
+			this.site.branch = (yield this.exec("git rev-parse --abbrev-ref HEAD")).stdout.trim();
+		}
 		if (this.site.branch == 'HEAD') {
 			this.site.branch = ''; // this happens when no branch is checked out
 		}
-		if (this.site.branch) {
+		if (this.site.isMergeRequestSite) {
+			this.site.upstreamRevision = (yield this.exec("git rev-parse origin/" + this.site.sourceBranch)).stdout.trim();
+			this.site.aheadBy = 0; // not really useful because we are always ahead by the merge commit
+			this.site.behindBy = yield this._getCommitCountBetween('HEAD', 'origin/' + this.site.sourceBranch);
+		} else  if (this.site.branch) {
 			this.site.upstreamRevision = (yield this.exec("git rev-parse origin/" + this.site.branch)).stdout.trim();
 			this.site.aheadBy = yield this._getCommitCountBetween('origin/' + this.site.branch, this.site.branch);
 			this.site.behindBy = yield this._getCommitCountBetween(this.site.branch, 'origin/' + this.site.branch);

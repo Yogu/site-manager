@@ -6,6 +6,8 @@ test:
     path: ../db/test.sqlite # only for sqlite, relative to this file
 
 dev:
+  db:
+    path: ../db/test.sqlite # only for sqlite, relative to this file
 
 feature-x:
   root: ../feature-x-site # optional, specifies path to repo relative to siteRoot
@@ -18,3 +20,10 @@ staging:
   db:
     path: ../db/staging.sqlite
   stagingOf: production
+
+mr-new-feature:
+  isMergeRequestSite: true
+  stagingOf: dev
+  sourceBranch: new-feature
+  db:
+    path: ../db/test.sqlite # only for sqlite, relative to this file

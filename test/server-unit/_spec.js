@@ -1,6 +1,6 @@
 require('../utils/resources.js');
 
-jasmine.getEnv().defaultTimeoutInterval = 500;
+jasmine.getEnv().defaultTimeoutInterval = 1000;
 
 require('q').longStackSupport = true;
 

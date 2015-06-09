@@ -50,6 +50,7 @@ LoadSiteManagerTask.prototype.perform = function*() {
 	manager.ownURL = config.ownURL || 'http://localhost:8888/';
 	manager.mailConfig = config.mail || { transport: 'sendmail', sender: 'Site Manager <site-manager@example.com>' };
 	manager.config = config;
+	manager.siteBranchMapping = config.siteBranchMapping || {};
 
 	var sites = yaml.safeLoad(yield fs.read(manager.path + '/sites.yaml'));
 
@@ -79,6 +80,8 @@ LoadSiteManagerTask.prototype.perform = function*() {
 		site.watchers = globalWatchers.concat(siteConfig.watchers || []);
 		site.ownURL = manager.ownURL + '#/sites/' + site.name;
 		site.stagingOf = siteConfig.stagingOf;
+		site.isMergeRequestSite = siteConfig.isMergeRequestSite;
+		site.sourceBranch = siteConfig.sourceBranch;
 
 		if (this.loadSites || existingSites.length == 0 /* always load new sites */)
 			site.schedule(site.loadTask());

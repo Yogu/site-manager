@@ -4,6 +4,7 @@ var FetchTask = require('./tasks/fetch.js');
 var LoadSiteManagerTask = require('./tasks/loadSiteManager.js');
 var AddSiteTask = require('./tasks/addSite.js');
 var DeleteSiteTask = require('./tasks/deleteSite.js');
+var CreateMergeRequestSiteTask = require('./tasks/createMergeRequestSite.js');
 var Config = require('./config.js');
 
 // Register common hooks
@@ -34,6 +35,10 @@ SiteManager.prototype.addSiteTask = function(siteName, branch) {
 
 SiteManager.prototype.deleteSiteTask = function(site) {
 	return new DeleteSiteTask(this, site);
+};
+
+SiteManager.prototype.createMergeRequestSiteTask = function(sourceBranch, targetBranch) {
+	return new CreateMergeRequestSiteTask(this, sourceBranch, targetBranch)
 };
 
 SiteManager.prototype.getSite = function(siteName) {

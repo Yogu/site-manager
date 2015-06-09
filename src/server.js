@@ -11,7 +11,7 @@ require('q').longStackSupport = true;
 expressValidator.validator.extend('isIdentifier', function (str) {
 	if (typeof str != 'string')
 		return false;
-	return str.match(/[a-zA-Z0-9_\-\.]+/) !== null;
+	return str.match(/[a-zA-Z0-9\-]+/) !== null;
 });
 
 exports.start = function(port, dir) {
@@ -53,6 +53,31 @@ exports.start = function(port, dir) {
 
 		var task = controller.manager.addSiteTask(req.body.siteName, req.body.branch);
 		controller.manager.schedule(task);
+		res.json({taskID: task.id});
+	});
+
+	app.post('/api/gitlab-merge-request', function(req, res) {
+		if (req.body.object_kind != 'merge_request') {
+			return res.send('Only merge_request events supported', 400);
+		}
+
+		if (req.body.object_attributes.action != 'open') {
+			return res.send('Only considering "open" events', 200);
+		}
+
+		req.checkBody('object_attributes.source_branch').isIdentifier();
+		req.checkBody('object_attributes.target_branch').isIdentifier();
+		var errors = req.validationErrors();
+		if (errors) {
+			return res.send('Validation errors: ' + JSON.stringify(errors), 400);
+		}
+
+		var sourceBranch = req.body.object_attributes.source_branch;
+		var targetBranch = req.body.object_attributes.target_branch;
+
+		var task = controller.manager.createMergeRequestSiteTask(sourceBranch, targetBranch);
+		controller.manager.schedule(task);
+
 		res.json({taskID: task.id});
 	});
 
