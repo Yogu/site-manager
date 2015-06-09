@@ -8,6 +8,7 @@ function CreateMergeRequestSiteTask(siteManager, sourceBranch, targetBranch) {
 	this.siteManager = siteManager;
 	this.sourceBranch = sourceBranch;
 	this.targetBranch = targetBranch;
+	this.name = 'Create Site for Merge Request from ' + sourceBranch + ' into ' + targetBranch;
 }
 
 CreateMergeRequestSiteTask.prototype = Object.create(Task.prototype);
