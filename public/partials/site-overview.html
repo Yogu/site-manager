@@ -18,15 +18,17 @@
 			<div ng-switch-when="mysql">MySQL (db: <strong>{{site.dbConfig.database}}</strong>,
 			 host: {{site.dbConfig.host}}, user: {{site.dbConfig.user}})</div>
 		</dd>
-		<dt ng-if="site.stagingOf">Staging:</dt>
-		<dd ng-if="site.stagingOf">This is the staging site of <a href="#/sites/{{site.stagingOf}}">{{site.stagingOf}}</a>.</dd>
+		<dt ng-if="site.stagingOf && !site.isMergeRequestSite">Staging:</dt>
+		<dd ng-if="site.stagingOf && !site.isMergeRequestSite">This is the staging site of <a href="#/sites/{{site.stagingOf}}">{{site.stagingOf}}</a>.</dd>
+		<dt ng-if="site.isMergeRequestSite">Merge Request:</dt>
+		<dd ng-if="site.isMergeRequestSite">This is the site for merge request of branch <i>{{site.sourceBranch}}</i> into site <a href="#/sites/{{site.stagingOf}}">{{site.stagingOf}}</a>.</dd>
 		<dt>Links:</dt>
 		<dd><a href="#/sites/{{site.name}}/tasks">tasks</a></dd>
 		<dd><a href="#/sites/{{site.name}}/backups">backups</a></dd>
 		<dd>
 			<button ng-if="site.canUpgrade" class="btn btn-success" ng-click="upgrade()">Upgrade {{site.behindBy}} commit(s)</button>
 			<button ng-if="site.stagingOf" class="btn" ng-click="resetStaging()">Reset to {{site.stagingOf}}</button>
-			<button ng-if="stagingOfSite && stagingOfSite.revision != site.revision" class="btn btn-success" ng-click="upgradeToStaging()">Upgrade {{site.stagingOf}}</button>
+			<button ng-if="!site.isMergeRequestSite && stagingOfSite && stagingOfSite.revision != site.revision" class="btn btn-success" ng-click="upgradeToStaging()">Upgrade {{site.stagingOf}}</button>
 			<button class="btn btn-danger" ng-click="reset()">Reset Data Base</button>
 			<button class="btn btn-danger" ng-click="delete()">Delete</button>
 		</dd>

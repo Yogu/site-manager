@@ -43,8 +43,8 @@ Site.prototype.upgradeTask = function() {
 	return new UpgradeSiteTask(this);
 };
 
-Site.prototype.upgradeToRevisionTask = function(revision) {
-	return new UpgradeToRevisionTask(this, revision);
+Site.prototype.upgradeToRevisionTask = function(revision, allowNonFastForward) {
+	return new UpgradeToRevisionTask(this, revision, allowNonFastForward);
 };
 
 Site.prototype.backupTask = function(message) {

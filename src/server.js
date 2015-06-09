@@ -11,7 +11,7 @@ require('q').longStackSupport = true;
 expressValidator.validator.extend('isIdentifier', function (str) {
 	if (typeof str != 'string')
 		return false;
-	return str.match(/[a-zA-Z0-9_\-\.]+/) !== null;
+	return str.match(/[a-zA-Z0-9\-]+/) !== null;
 });
 
 exports.start = function(port, dir) {
@@ -53,6 +53,27 @@ exports.start = function(port, dir) {
 
 		var task = controller.manager.addSiteTask(req.body.siteName, req.body.branch);
 		controller.manager.schedule(task);
+		res.json({taskID: task.id});
+	});
+
+	app.post('/api/merge-request', function(req, res) {
+		req.checkBody('sourceBranch').isIdentifier();
+		req.checkBody('targetBranch').isIdentifier();
+		var errors = req.validationErrors();
+		if (errors)
+			return res.send('Validation errors: ' + JSON.stringify(errors), 400);
+
+		var siteName = 'mr-' + req.body.sourceBranch;
+		var site = controller.manager.getSite(siteName);
+		var task;
+		if (site) {
+			task = site.updateMergeRequestTask(req.body.sourceBranch, req.body.targetBranch);
+			site.schedule(task);
+		} else {
+			task = controller.manager.createOrUpdateMergeRequestSiteTask(req.body.sourceBranch, req.body.targetBranch);
+			controller.manager.schedule(task);
+		}
+
 		res.json({taskID: task.id});
 	});
 
