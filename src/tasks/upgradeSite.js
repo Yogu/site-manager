@@ -33,10 +33,16 @@ UpgradeSiteTask.prototype.perform = function*() {
 			yield this.runNested(site.resetStagingTask( { backup: false }));
 		}
 
-		this.doLog('Pulling incoming commits...');
-		yield this.exec('git pull --ff-only');
+		if (this.site.isMergeRequestSite) {
+			this.doLog('Merging source branch ' + this.site.sourceBranch + '...');
+			yield this.exec('git merge --no-ff origin/' + this.site.sourceBranch);
+			this.doLog('Merge completed');
+		} else {
+			this.doLog('Pulling incoming commits...');
+			yield this.exec('git pull --ff-only');
+			this.doLog('Pull completed');
+		}
 
-		this.doLog('Pull completed');
 		yield this.runNestedQuietly(site.loadTask());
 
 		yield hooks.call('afterPull', this, site);

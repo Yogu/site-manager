@@ -79,6 +79,8 @@ LoadSiteManagerTask.prototype.perform = function*() {
 		site.watchers = globalWatchers.concat(siteConfig.watchers || []);
 		site.ownURL = manager.ownURL + '#/sites/' + site.name;
 		site.stagingOf = siteConfig.stagingOf;
+		site.isMergeRequestSite = siteConfig.isMergeRequestSite;
+		site.sourceBranch = siteConfig.sourceBranch;
 
 		if (this.loadSites || existingSites.length == 0 /* always load new sites */)
 			site.schedule(site.loadTask());
