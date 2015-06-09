@@ -50,6 +50,7 @@ LoadSiteManagerTask.prototype.perform = function*() {
 	manager.ownURL = config.ownURL || 'http://localhost:8888/';
 	manager.mailConfig = config.mail || { transport: 'sendmail', sender: 'Site Manager <site-manager@example.com>' };
 	manager.config = config;
+	manager.siteBranchMapping = config.siteBranchMapping || {};
 
 	var sites = yaml.safeLoad(yield fs.read(manager.path + '/sites.yaml'));
 

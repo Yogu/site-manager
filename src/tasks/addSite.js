@@ -105,6 +105,8 @@ AddSiteTask.prototype.perform = function*() {
 	yield site.loaded;
 	yield hooks.call('afterCreate', this, site);
 	yield hooks.call('afterCheckout', this, site);
+
+	return site;
 };
 
 module.exports = AddSiteTask;

@@ -56,23 +56,28 @@ exports.start = function(port, dir) {
 		res.json({taskID: task.id});
 	});
 
-	app.post('/api/merge-request', function(req, res) {
-		req.checkBody('sourceBranch').isIdentifier();
-		req.checkBody('targetBranch').isIdentifier();
-		var errors = req.validationErrors();
-		if (errors)
-			return res.send('Validation errors: ' + JSON.stringify(errors), 400);
-
-		var siteName = 'mr-' + req.body.sourceBranch;
-		var site = controller.manager.getSite(siteName);
-		var task;
-		if (site) {
-			task = site.updateMergeRequestTask(req.body.sourceBranch, req.body.targetBranch);
-			site.schedule(task);
-		} else {
-			task = controller.manager.createOrUpdateMergeRequestSiteTask(req.body.sourceBranch, req.body.targetBranch);
-			controller.manager.schedule(task);
+	app.post('/api/gitlab-merge-request', function(req, res) {
+		console.log(JSON.stringify(req.body));
+		if (req.body.object_kind != 'merge_request') {
+			return res.send('Only merge_request events supported', 400);
 		}
+
+		if (req.body.object_attributes.action != 'open') {
+			return res.send('Only considering "open" events', 200);
+		}
+
+		req.checkBody('object_attributes.source_branch').isIdentifier();
+		req.checkBody('object_attributes.target_branch').isIdentifier();
+		var errors = req.validationErrors();
+		if (errors) {
+			return res.send('Validation errors: ' + JSON.stringify(errors), 400);
+		}
+
+		var sourceBranch = req.body.object_attributes.source_branch;
+		var targetBranch = req.body.object_attributes.target_branch;
+
+		var task = controller.manager.createMergeRequestSiteTask(sourceBranch, targetBranch);
+		controller.manager.schedule(task);
 
 		res.json({taskID: task.id});
 	});
