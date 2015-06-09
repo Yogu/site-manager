@@ -12,5 +12,5 @@ describe("server", function() {
 			}
 			done();
 		}.bind(this));
-	});
+	}, 5000);
 });

@@ -53,7 +53,7 @@ describe("SiteManager", function() {
 				});
 			});
 		}.bind(this));
-	});
+	}, 5000);
 
 	it("can add new site", function(done) {
 		resources.use(function(path) {
