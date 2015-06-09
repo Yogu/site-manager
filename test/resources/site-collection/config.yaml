@@ -15,3 +15,7 @@ notifyLastCommitterOnFailedUpgrade: false
 # data base defaults (prototype for site db option)
 db:
   type: sqlite
+
+# specify which site should be used as base for merge requests into specific branches
+siteBranchMapping:
+  master: dev

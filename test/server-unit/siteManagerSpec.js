@@ -12,7 +12,7 @@ describe("SiteManager", function() {
 
 			manager.schedule(manager.loadTask());
 			manager.on('load', function() {
-				expect(manager.sites.length).toBe(5);
+				expect(manager.sites.length).toBe(6);
 
 				expect(manager.sites[0]).toBeInstanceOf(Site);
 				expect(manager.sites[0].name).toBe('test');
@@ -45,8 +45,8 @@ describe("SiteManager", function() {
 					manager.schedule(task);
 					task
 					.then(function() {
-						expect(task.plainLog).toContain('sites test, dev, staging will be upgraded');
-						expect(task.plainLog).toContain('branches master have been updated');
+						expect(task.plainLog).toMatch(/.*sites test, dev, staging.* will be upgraded.*/);
+						expect(task.plainLog).toMatch(/.*branches master.* have been updated.*/);
 						expect(scheduledTasks).toEqual(['Upgrade']);
 						done();
 					});
@@ -95,6 +95,27 @@ describe("SiteManager", function() {
 				})
 				.catch(function(err) { this.fail(err); }.bind(this))
 				.then(done);
+			}.bind(this));
+		}.bind(this));
+	}, 5000);
+
+	it("can add a merge request site", function(done) {
+		resources.use(function(path) {
+			path += '/site-collection';
+			var manager = new SiteManager(path);
+			manager.on('fail', function(task, error) { this.fail(error); done(); }.bind(this));
+			manager.schedule(manager.loadTask());
+
+			manager.once('load', function() {
+				var task = manager.createMergeRequestSiteTask('second-feature', 'master');
+				manager.schedule(task);
+				task.then(function() {
+					var sites = manager.sites.filter(function(s) { return s.name == 'mr-second-feature'; });
+					expect(sites.length).toBeGreaterThan(0);
+					return sites[0].loaded;
+				})
+						.catch(function(err) { this.fail(err); }.bind(this))
+						.then(done);
 			}.bind(this));
 		}.bind(this));
 	}, 5000);
