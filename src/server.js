@@ -57,7 +57,6 @@ exports.start = function(port, dir) {
 	});
 
 	app.post('/api/gitlab-merge-request', function(req, res) {
-		console.log(JSON.stringify(req.body));
 		if (req.body.object_kind != 'merge_request') {
 			return res.send('Only merge_request events supported', 400);
 		}
