@@ -32,8 +32,10 @@ CreateMergeRequestSiteTask.prototype.perform = function*() {
 	sites[site.name].stagingOf = targetSiteName;
 	yield fs.write(manager.path + '/sites.yaml', yaml.safeDump(sites));
 
-	yield site.schedule(site.loadTask());
-	yield site.schedule(site.upgradeTask());
+	yield this.runNested(manager.loadTask());
+	var upgradeTask = site.upgradeTask();
+	site.schedule(upgradeTask);
+	yield upgradeTask;
 };
 
 module.exports = CreateMergeRequestSiteTask;
