@@ -72,10 +72,11 @@ exports.start = function(port, dir) {
 			return res.send('Validation errors: ' + JSON.stringify(errors), 400);
 		}
 
+		var siteName = 'mr' + req.body.object_attributes.iid;
 		var sourceBranch = req.body.object_attributes.source_branch;
 		var targetBranch = req.body.object_attributes.target_branch;
 
-		var task = controller.manager.createMergeRequestSiteTask(sourceBranch, targetBranch);
+		var task = controller.manager.createMergeRequestSiteTask(siteName, sourceBranch, targetBranch);
 		controller.manager.schedule(task);
 
 		res.json({taskID: task.id});

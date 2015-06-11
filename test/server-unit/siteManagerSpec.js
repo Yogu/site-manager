@@ -107,10 +107,10 @@ describe("SiteManager", function() {
 			manager.schedule(manager.loadTask());
 
 			manager.once('load', function() {
-				var task = manager.createMergeRequestSiteTask('second-feature', 'master');
+				var task = manager.createMergeRequestSiteTask('mr2', 'second-feature', 'master');
 				manager.schedule(task);
 				task.then(function() {
-					var sites = manager.sites.filter(function(s) { return s.name == 'mr-second-feature'; });
+					var sites = manager.sites.filter(function(s) { return s.name == 'mr2'; });
 					expect(sites.length).toBeGreaterThan(0);
 					return sites[0].loaded;
 				})
