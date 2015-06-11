@@ -9,6 +9,7 @@ var ResetTask = require('./tasks/reset.js');
 var DeleteSiteTask = require('./tasks/deleteSite.js');
 var ResetStagingTask = require('./tasks/resetStaging.js');
 var UpgradeToRevisionTask = require('./tasks/upgradeToRevision.js');
+var MailTask = require('./tasks/mail.js');
 var databases = require('./databases');
 var Q = require('q');
 var fs = require('q-io/fs');
@@ -87,5 +88,18 @@ Site.prototype.modifyConfig = Q.async(function*(changer) {
 	changer(site);
 	yield fs.write(this.siteManager.path + '/sites.yaml', yaml.safeDump(sites));
 });
+
+Site.prototype.scheduleUpgradeOrConfirmation = function() {
+	var site = this;
+	if (this.config.requireUpgradeConfirmation) {
+		this.schedule(new Task('Send upgrade confirmation mails', function* () {
+			var content = 'The site ' + site.name + ' can be upgraded, please confirm upgrade at ' + site.ownURL;
+
+			yield this.runNested(new MailTask(site.siteManager.mailConfig, site.name + ' can be upgraded', content, site.watchers));
+		}));
+	} else {
+		site.schedule(site.upgradeTask());
+	}
+};
 
 module.exports = Site;
