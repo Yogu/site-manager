@@ -1,6 +1,6 @@
 {
 	"name": "site-manager",
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"description": "Upgrade, backup and manage multiple instances of the same website",
 	"main": "index.js",
 	"author": "Jan Melcher <info@yogularm.de>",
