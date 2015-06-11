@@ -92,6 +92,7 @@ Site.prototype.modifyConfig = Q.async(function*(changer) {
 Site.prototype.scheduleUpgradeOrConfirmation = function() {
 	var site = this;
 	if (this.config.requireUpgradeConfirmation) {
+		this.schedule(this.loadTask()); // show that upgrade is possible
 		this.schedule(new Task('Send upgrade confirmation mails', function* () {
 			var content = 'The site ' + site.name + ' can be upgraded, please confirm upgrade at ' + site.ownURL;
 
