@@ -3,19 +3,20 @@ var fs = require('q-io/fs');
 var Q = require('q');
 var yaml = require('js-yaml');
 
-function CreateMergeRequestSiteTask(siteManager, sourceBranch, targetBranch) {
+function CreateMergeRequestSiteTask(siteManager, siteName, sourceBranch, targetBranch) {
 	Task.call(this);
 	this.siteManager = siteManager;
 	this.sourceBranch = sourceBranch;
 	this.targetBranch = targetBranch;
-	this.name = 'Create Site for Merge Request from ' + sourceBranch + ' into ' + targetBranch;
+	this.siteName = siteName;
+	this.name = 'Create Site ' + siteName + ' (for Merge Request of ' + sourceBranch + ' into ' + targetBranch + ')';
 }
 
 CreateMergeRequestSiteTask.prototype = Object.create(Task.prototype);
 
 CreateMergeRequestSiteTask.prototype.perform = function*() {
 	var manager = this.siteManager;
-	var siteName = 'mr-' + this.sourceBranch;
+	var siteName = this.siteName;
 
 	if (!(this.targetBranch in manager.siteBranchMapping)) {
 		throw new Error('siteBranchMapping config does not contain the site for branch ' + this.targetBranch);

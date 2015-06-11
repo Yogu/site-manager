@@ -37,8 +37,8 @@ SiteManager.prototype.deleteSiteTask = function(site) {
 	return new DeleteSiteTask(this, site);
 };
 
-SiteManager.prototype.createMergeRequestSiteTask = function(sourceBranch, targetBranch) {
-	return new CreateMergeRequestSiteTask(this, sourceBranch, targetBranch)
+SiteManager.prototype.createMergeRequestSiteTask = function(siteName, sourceBranch, targetBranch) {
+	return new CreateMergeRequestSiteTask(this, siteName, sourceBranch, targetBranch)
 };
 
 SiteManager.prototype.getSite = function(siteName) {

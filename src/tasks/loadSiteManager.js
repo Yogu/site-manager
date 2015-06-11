@@ -77,6 +77,7 @@ LoadSiteManagerTask.prototype.perform = function*() {
 		if (site.dbConfig.path)
 			site.dbConfig.path = path.resolve(manager.path, site.dbConfig.path);
 
+		site.config = siteConfig;
 		site.watchers = globalWatchers.concat(siteConfig.watchers || []);
 		site.ownURL = manager.ownURL + '#/sites/' + site.name;
 		site.stagingOf = siteConfig.stagingOf;

@@ -40,7 +40,7 @@ FetchTask.prototype.perform = function*() {
 		' will be upgraded');
 		
 	updatedSites.forEach(function(site) {
-		site.schedule(site.upgradeTask());
+		site.scheduleUpgradeOrConfirmation();
 	});
 };
 

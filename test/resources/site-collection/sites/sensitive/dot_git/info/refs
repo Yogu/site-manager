@@ -1,0 +1,7 @@
+7bf49e2636c5f54672e970b7fec548acd5b4bc13	refs/heads/master
+1cccade31b5671504e1eea5147fd31be4f71641d	refs/heads/sensitive
+7bf49e2636c5f54672e970b7fec548acd5b4bc13	refs/remotes/origin/HEAD
+7bf49e2636c5f54672e970b7fec548acd5b4bc13	refs/remotes/origin/master
+7f2efb17ba04bd394f2315a870ad7e2b330da45c	refs/remotes/origin/new-feature
+f2614a5777fad66b7fdc8f582da7f2e200b1438f	refs/remotes/origin/second-feature
+1cccade31b5671504e1eea5147fd31be4f71641d	refs/remotes/origin/sensitive

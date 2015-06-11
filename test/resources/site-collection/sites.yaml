@@ -27,3 +27,6 @@ mr-new-feature:
   sourceBranch: new-feature
   db:
     path: ../db/test.sqlite # only for sqlite, relative to this file
+
+sensitive:
+  requireUpgradeConfirmation: true
