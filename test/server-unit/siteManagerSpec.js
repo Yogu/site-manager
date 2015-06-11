@@ -12,7 +12,7 @@ describe("SiteManager", function() {
 
 			manager.schedule(manager.loadTask());
 			manager.on('load', function() {
-				expect(manager.sites.length).toBe(6);
+				expect(manager.sites.length).toBe(7);
 
 				expect(manager.sites[0]).toBeInstanceOf(Site);
 				expect(manager.sites[0].name).toBe('test');
