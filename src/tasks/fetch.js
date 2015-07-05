@@ -15,7 +15,7 @@ FetchTask.prototype.perform = function*() {
 	var result = yield this.exec('git fetch origin +refs/heads/*:refs/heads/*');
 	var updatedBranches = {};
 	result.stderr.split("\n").forEach(function(line) {
-		var matches = line.match(/^   [^ ]+ +([^ ]+) /);
+		var matches = line.match(/^ [+ ] [^ ]+ +([^ ]+) /);
 		if (!matches)
 			return; // this is not a ref update
 		var branch = matches[1];
